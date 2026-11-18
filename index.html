@@ -477,7 +477,8 @@ function migrate(){
  if(!S.boss){var mx=bossMax(1);S.boss={n:1,max:mx,hp:Math.round(mx*.34),contrib:{you:380,"Jake M.":300,"Cole B.":260,"Will S.":200,"Drew K.":160,"Tyler R.":126}};}
  if(!THEMES[S.theme])S.theme="ocean";
  S.tut=S.tut||{intro:0,tour:0,seen:{}};
- if(!S.spots)S.spots=defaultSpots();if(S.pretend===undefined)S.pretend=null;S.tut.seen=S.tut.seen||{};
+ if(!S.spots)S.spots=defaultSpots();
+ else if(!S.spotsV2){var OLD={library:[33.4526,-88.7876],montgomery:[33.453611,-88.791389]};defaultSpots().forEach(function(d){var e=S.spots.filter(function(x){return x.id===d.id;})[0];if(!e)return;var o=OLD[d.id];if(!(typeof e.lat==="number")||(o&&e.lat===o[0]&&e.lng===o[1])){e.lat=d.lat;e.lng=d.lng;}});S.spotsV2=1;}if(S.pretend===undefined)S.pretend=null;S.tut.seen=S.tut.seen||{};
  S.skills=S.skills||{};S.badges=S.badges||{};S.pass=S.pass||{xp:2400,claimed:[]};S.exp=S.exp||{slots:[null,null,null]};S.combo=S.combo||{n:0,lastEnd:0};
  if(!S.stats||S.stats.session==null)S.stats={session:38,min:S.totalMin,crit:0,dmg:0,hatch:3,evolve:2,feed:0,energy:0,expstart:0,expdone:0,focus:0,night:0,maxCombo:0,chests:0,bestStreak:Math.max(S.streak,9)};
  if(!S.starsInit){S.stars+=level()-1;S.starsInit=1;}
@@ -1401,15 +1402,15 @@ setInterval(function(){
 
 /* ================= STUDY SPOT VERIFICATION (GPS geofence) ================= */
 function defaultSpots(){return [
- {id:"library",name:"Mitchell Memorial Library",lat:33.4526,lng:-88.7876,r:100},
- {id:"omac",name:"Old Main Academic Center",lat:null,lng:null,r:100},
- {id:"union",name:"Colvard Student Union",lat:null,lng:null,r:100},
- {id:"chapel",name:"Chapel of Memories",lat:null,lng:null,r:100},
- {id:"phidelt",name:"Phi Delta Theta House",lat:null,lng:null,r:100},
- {id:"lee",name:"Lee Hall",lat:null,lng:null,r:100},
- {id:"swalm",name:"Swalm Hall",lat:null,lng:null,r:100},
- {id:"montgomery",name:"Montgomery Hall",lat:33.453611,lng:-88.791389,r:100},
- {id:"mccool",name:"McCool Hall",lat:null,lng:null,r:100}
+ {id:"library",name:"Mitchell Memorial Library",lat:33.4526995,lng:-88.7886114,r:100},
+ {id:"omac",name:"Old Main Academic Center",lat:33.4565355,lng:-88.7896129,r:100},
+ {id:"union",name:"Colvard Student Union",lat:33.4548116,lng:-88.790119,r:100},
+ {id:"chapel",name:"Chapel of Memories",lat:33.4562147,lng:-88.7904863,r:100},
+ {id:"phidelt",name:"Phi Delta Theta House",lat:33.4516005,lng:-88.798474,r:100},
+ {id:"lee",name:"Lee Hall",lat:33.4548163,lng:-88.7889585,r:100},
+ {id:"swalm",name:"Swalm Hall",lat:33.4525319,lng:-88.7898954,r:100},
+ {id:"montgomery",name:"Montgomery Hall",lat:33.45384,lng:-88.7913953,r:100},
+ {id:"mccool",name:"McCool Hall",lat:33.4537636,lng:-88.7904962,r:100}
 ];}
 var LOC_EVERY=3*60e3;
 function spotSet(s){return typeof s.lat==="number"&&typeof s.lng==="number"&&!isNaN(s.lat)&&!isNaN(s.lng);}
