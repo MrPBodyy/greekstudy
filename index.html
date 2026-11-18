@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -222,6 +222,10 @@ nav button{position:relative}
 .expslot.empty{border-style:dashed;cursor:pointer}
 .expslot.locked{opacity:.55}
 .expdur{display:flex;align-items:center;gap:10px;width:100%;color:#fff;cursor:pointer;padding:12px 14px}
+/* no zooming: block pinch + double-tap zoom, and stop iOS auto-zoom on text fields */
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+button,a,.bossbox,.weak,.chestbtn{touch-action:manipulation}
+input,select,textarea{font-size:16px!important}
 /* installed-app safe areas (iPhone notch / home bar) */
 main{padding-top:calc(18px + env(safe-area-inset-top))}
 nav{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
@@ -1371,6 +1375,13 @@ render(true);
 if(S.boss.hp<=0)setTimeout(defeat,600);
 })();
 
+</script>
+<script>
+(function(){
+ function stop(e){e.preventDefault();}
+ ["gesturestart","gesturechange","gestureend"].forEach(function(t){document.addEventListener(t,stop,{passive:false});});
+ document.addEventListener("touchmove",function(e){if(e.touches&&e.touches.length>1)e.preventDefault();},{passive:false});
+})();
 </script>
 <script>if("serviceWorker" in navigator){try{navigator.serviceWorker.register("sw.js").catch(function(){})}catch(e){}}</script>
 </body>
