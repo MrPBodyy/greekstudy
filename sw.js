@@ -1,6 +1,6 @@
 // Network first, so every update shows up the next time the app opens online.
 // Falls back to the cached copy when offline.
-const CACHE = "greekstudy-v6";
+const CACHE = "greekstudy-v7";
 const FILES = ["./", "./index.html", "./manifest.json", "./icon-180.png", "./icon-192.png", "./icon-512.png"];
 self.addEventListener("install", e => { self.skipWaiting(); e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES))); });
 self.addEventListener("activate", e => { e.waitUntil(self.clients.claim()); });
