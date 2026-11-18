@@ -194,6 +194,34 @@ nav svg{width:24px;height:24px}
 .tierline{font-size:12px;font-weight:900;padding:8px 10px;border-radius:12px;background:rgba(0,0,0,.25)}
 .t-gold{color:#ffd23f}.t-silver{color:#d6deea}.t-bronze{color:#e8a868}.t-none{color:#ff9db6}
 
+.seg2{display:flex;gap:6px;background:var(--card);border:2px solid var(--edge);border-radius:16px;padding:4px}
+.seg2 button{flex:1;height:40px;border:0;border-radius:12px;background:none;font-family:Fredoka,sans-serif;font-weight:600;font-size:14px;color:var(--muted);position:relative}
+.seg2 button.on{background:var(--accent);color:var(--onAccent)}
+.seg2 .dot,.ndot{position:absolute;top:6px;right:8px;width:9px;height:9px;border-radius:50%;background:#ff3b5c;border:2px solid var(--card)}
+nav button{position:relative}
+.ndot{top:4px;right:calc(50% - 18px)}
+.qcard{padding:12px 14px}.qcard.claimed{opacity:.55}
+.passhero{background:linear-gradient(150deg,#4a2a0a,#2a1608);border-color:#a8780a}
+.ptier{display:flex;align-items:center;gap:12px;background:var(--card);border:2px solid var(--edge);border-radius:16px;padding:8px 12px;opacity:.6}
+.ptier.reached{opacity:1;border-color:var(--accent)}
+.ptier.big{background:linear-gradient(90deg,rgba(255,210,63,.18),var(--card));border-color:#ffd23f}
+.ptier .pnum{width:30px;height:30px;border-radius:10px;background:var(--track);display:flex;align-items:center;justify-content:center;font-family:Fredoka,sans-serif;font-weight:700;flex-shrink:0}
+.ptier.reached .pnum{background:var(--accent);color:var(--onAccent)}
+.ptier .li{width:36px;height:36px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ptier .li svg{max-width:30px;max-height:34px;width:28px;height:28px}
+.sknode{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:10px 12px}
+.sknode.locked{opacity:.55}
+.pips{display:flex;gap:4px;margin-top:2px}.pips i{width:16px;height:6px;border-radius:999px;background:var(--track)}
+.badge{background:var(--card);border:2px solid var(--edge);border-radius:18px;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;min-width:0}
+.badge b{font-family:Fredoka,sans-serif;font-size:13px}
+.badge .xs{font-size:10px;line-height:1.3}
+.badge.off .bdg{filter:grayscale(1);opacity:.5}
+.bdg{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#14141f;border:3px solid rgba(255,255,255,.6);box-shadow:inset 0 -4px 0 rgba(0,0,0,.2)}
+.bdg svg{width:26px;height:26px}
+.expslot{display:flex;align-items:center;gap:12px;width:100%;color:#fff}
+.expslot.empty{border-style:dashed;cursor:pointer}
+.expslot.locked{opacity:.55}
+.expdur{display:flex;align-items:center;gap:10px;width:100%;color:#fff;cursor:pointer;padding:12px 14px}
 /* installed-app safe areas (iPhone notch / home bar) */
 main{padding-top:calc(18px + env(safe-area-inset-top))}
 nav{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
@@ -318,8 +346,12 @@ var SHOP=[
  {id:"shield",price:300,desc:"Saves your streak if you miss a day",icon:"shield"},
  {id:"xp",price:200,desc:"2× XP for your next session",icon:"potion"},
  {id:"warp",price:250,desc:"Next session pays +20% points",icon:"bolt"},
- {id:"lucky",price:400,desc:"Better rarity odds on your next egg",icon:"clover"}
+ {id:"lucky",price:400,desc:"Better rarity odds on your next egg",icon:"clover"},
+ {id:"dhatch",price:500,desc:"Your next egg hatches TWO pets",icon:"egg",name:"Double Hatch"},
+ {id:"night",price:350,desc:"7 days of +25% points on sessions started 9 pm to 4 am",icon:"moon",name:"Night Owl Lantern"},
+ {id:"bell",price:200,desc:"Ring your chapter: a Study Buddy joins your next session (+15% for you both)",icon:"users",name:"Buddy Bell"}
 ];
+function boostName(id){var it=SHOP.filter(function(x){return x.id===id})[0];return it&&it.name?it.name:T().boosts[id];}
 
 function dstr(d){d=d||new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
 function daysAgo(n){var d=new Date();d.setDate(d.getDate()-n);return dstr(d);}
@@ -344,6 +376,9 @@ function migrate(){
  if(!S.lastChapterStudy)S.lastChapterStudy=Date.now();if(!S.lastSim)S.lastSim=Date.now();
  if(!S.boss){var mx=bossMax(1);S.boss={n:1,max:mx,hp:Math.round(mx*.34),contrib:{you:380,"Jake M.":300,"Cole B.":260,"Will S.":200,"Drew K.":160,"Tyler R.":126}};}
  if(!THEMES[S.theme])S.theme="ocean";
+ S.skills=S.skills||{};S.badges=S.badges||{};S.pass=S.pass||{xp:2400,claimed:[]};S.exp=S.exp||{slots:[null,null,null]};S.combo=S.combo||{n:0,lastEnd:0};
+ if(!S.stats||S.stats.session==null)S.stats={session:38,min:S.totalMin,crit:0,dmg:0,hatch:3,evolve:2,feed:0,energy:0,expstart:0,expdone:0,focus:0,night:0,maxCombo:0,chests:0,bestStreak:Math.max(S.streak,9)};
+ if(!S.starsInit){S.stars+=level()-1;S.starsInit=1;}
 }
 migrate();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
@@ -377,8 +412,10 @@ function phase(){var r=S.boss.hp/S.boss.max;return r>2/3?1:r>1/3?2:3;}
 (function dailyCheck(){
  var today=dstr();
  if(S.today.date!==today)S.today={date:today,n:0};
+ var cover=(S.skills&&S.skills.iron>=1)?2:1;
+ if(S.skills&&S.skills.iron>=2&&S.freeShieldWeek!==weekKey()){S.freeShieldWeek=weekKey();S.inv.shield=(S.inv.shield||0)+1;}
  if(S.lastStudy<daysAgo(1)){
-  if(S.inv.shield>0&&S.streak>0){S.inv.shield--;S.lastStudy=daysAgo(1);setTimeout(function(){toast(T().boosts.shield+" saved your "+S.streak+"-day streak")},600);}
+  if(S.inv.shield>0&&S.streak>0&&S.lastStudy>=daysAgo(1+cover)){S.inv.shield--;S.lastStudy=daysAgo(1);setTimeout(function(){toast(T().boosts.shield+" saved your "+S.streak+"-day streak")},600);}
   else S.streak=0;
  }
  save();
@@ -405,6 +442,11 @@ var ICONS={
  chest:'<rect x="3" y="10" width="18" height="10" rx="2"/><path d="M3 10a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4M12 12v3"/>',
  back:'<path d="M15 5l-7 7 7 7"/>',
  flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ egg:'<path d="M12 3c4 0 7 7 7 11a7 7 0 0 1-14 0c0-4 3-11 7-11z"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c0-4 3-6 7-6s7 2 7 6M16 4a3.5 3.5 0 0 1 0 7M18 14c2.5.5 4 2.5 4 6"/>',
+ moon:'<path d="M20 14a8 8 0 1 1-10-10 6 6 0 0 0 10 10z"/>',
  terminal:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9l3 3-3 3M13 15h4"/>'
 };
 function ic(n,cls){return '<svg class="'+(cls||"icon")+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+ICONS[n]+'</svg>';}
@@ -594,7 +636,9 @@ function homeScreen(){
  var t=T(),pet=activePet(),sp=spById(pet.s),need=NEED[pet.stage];
  var pc=need?Math.min(100,pet.food/need*100):100;
  var eggReady=S.eggMin>=EGG_MIN||S.eggQueue.length>0;
- var inv=SHOP.filter(function(i){return S.inv[i.id]>0}).map(function(i){return '<span class="chip" style="font-size:12px">'+ic(i.icon)+t.boosts[i.id]+' ×'+S.inv[i.id]+'</span>';}).join("");
+ var inv=SHOP.filter(function(i){return S.inv[i.id]>0}).map(function(i){return '<span class="chip" style="font-size:12px">'+ic(i.icon)+boostName(i.id)+' ×'+S.inv[i.id]+'</span>';}).join("");
+ var live=(comboReady()?'<span class="chip" style="font-size:12px;border-color:var(--accent)">'+ic("waves")+'Combo ×'+(1+.1*comboNow()).toFixed(1)+' · <span data-end="'+(S.combo.lastEnd+15*60e3)+'" data-pre="" data-done="expired">'+timeLeft(S.combo.lastEnd+15*60e3-Date.now())+'</span></span>':'')+(nightOn()?'<span class="chip" style="font-size:12px">'+ic("moon")+'Night Owl '+(isNight()?'active':'· 9 pm to 4 am')+'</span>':'')+(buddyNow()?'<span class="chip" style="font-size:12px">'+ic("users")+buddyNow()+' is studying</span>':'');
+ refreshQuests();var dq=S.quests.day.list.filter(function(q){var d=qdef("day",q.id);return d&&q.prog>=d.goal;}).length;
  var next=need?'<div class="xs muted" style="margin-top:8px">Next: '+STAGE_NAME[pet.stage+1]+' · '+perkLabel(sp,pet.stage+1,pet.shiny)+(pet.stage===1?' · unlocks a new feature':' · crown, aura and sparkles')+'</div>':'';
  return header()+'<div class="stack">'+
  (buffOn()?'<div class="chip" style="width:100%;justify-content:center;background:#3a1020;border-color:#ff3b5c;color:#ffc6d2">'+ic("trophy")+'Boss Slayers: +10% '+t.currency+' · '+buffDays()+'d left</div>':'')+
@@ -607,8 +651,10 @@ function homeScreen(){
  '<div class="grid2"><div class="card" style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">'+eggSVG(44,eggReady?"egg":"",S.eggQueue.length&&S.eggQueue[0].min)+'<span style="font-family:Fredoka;font-weight:600">'+(S.eggQueue.length?S.eggQueue.length+' chest egg'+(S.eggQueue.length>1?'s':''):'Mystery egg')+'</span><div class="bar thin" style="width:100%"><i style="width:'+(S.eggQueue.length?100:Math.min(100,S.eggMin/EGG_MIN*100))+'%"></i></div>'+
  (eggReady?'<button class="btn2 acc" style="width:100%;height:38px;flex:none" data-a="hatch">Hatch!</button>':'<span class="xs muted">'+Math.ceil(EGG_MIN-S.eggMin)+' study min to hatch</span>')+'</div>'+
  '<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:4px"><span class="muted">'+ic("waves")+'</span><span style="font-family:Fredoka;font-weight:700;font-size:28px;color:var(--coin)">'+x2(tideMult())+'</span><span style="font-weight:900;font-size:14px">'+t.tide+'</span><span class="xs muted">'+S.today.n+' session'+(S.today.n===1?'':'s')+' today · +0.15 each, up to ×1.45</span></div></div>'+
- (inv?'<div class="row" style="gap:8px;flex-wrap:wrap">'+inv+'</div>':'')+
- '<button class="btn3d" data-a="pre">'+ic("play")+'Start study session</button>'+bossCard(false)+'</div>';
+ ((inv||live)?'<div class="row" style="gap:8px;flex-wrap:wrap">'+live+inv+'<button class="chip" style="font-size:12px;cursor:pointer" data-a="goto" data-tab="you" data-k="youTab" data-v="shop">'+ic("bag")+'Shop</button></div>':'')+
+ '<button class="btn3d" data-a="pre">'+ic("play")+'Start study session</button>'+
+ '<button class="card row" style="gap:12px;width:100%;text-align:left;color:#fff" data-a="goto" data-tab="goals" data-k="goalTab" data-v="quests"><span class="ic" style="width:44px;height:44px">'+ic("flag")+'</span><span class="col" style="flex:1;gap:4px"><b>Daily quests '+dq+' / 3</b><div class="bar thin"><i style="width:'+(dq/3*100)+'%"></i></div><span class="xs muted">Semester Pass tier '+passTier()+' / 30'+(questsClaimable()+passClaimable()?' · rewards ready!':'')+'</span></span><span style="font-size:22px">›</span></button>'+
+ bossCard(false)+'</div>';
 }
 
 function petsScreen(){
@@ -620,7 +666,8 @@ function petsScreen(){
   '<span class="nm">'+(p?sp.name:(boss?'Boss pet':'???'))+'</span>'+(p?stars(p.stage):'')+(p&&p.shiny?'<span class="shinytag">✦ SHINY</span>':'')+'<span class="rar r-'+sp.rarity+'" style="font-size:9px;padding:2px 7px;margin-top:2px">'+(act?'Active':boss&&!p?'Boss chests':sp.rarity)+'</span></button>';}).join("");
  var total=THEME_ORDER.reduce(function(a,k){return a+myPets(k).length;},0);
  var tabs='<div class="tabs">'+THEME_ORDER.map(function(k){return '<button class="'+(tk===k?'on':'')+'" data-a="pettheme" data-t="'+k+'">'+THEMES[k].name+' '+myPets(k).length+'/'+THEMES[k].species.length+'</button>';}).join("")+'</div>';
- return header()+'<div class="stack"><div class="row between"><h1 style="font-size:28px">Stable</h1><span class="chip" style="font-size:12px">'+total+' / '+TOTAL_PETS+' found</span></div>'+
+ if(ui.petTab==="exp")return header()+'<div class="stack"><h1 style="font-size:28px">Pets</h1>'+seg("petTab","exp",[["col","Collection"],["exp","Expeditions",navDot("pets")]])+expeditionsBody()+'</div>';
+ return header()+'<div class="stack">'+seg("petTab","col",[["col","Collection"],["exp","Expeditions",S.exp.slots.some(function(x){return x&&Date.now()>=x.start+x.h*3600e3;})]])+'<div class="row between"><h1 style="font-size:28px">Stable</h1><span class="chip" style="font-size:12px">'+total+' / '+TOTAL_PETS+' found</span></div>'+
  '<section class="card row" style="gap:16px">'+eggSVG(70,eggReady?"egg":"",S.eggQueue.length&&S.eggQueue[0].min)+'<div class="col" style="flex:1;gap:6px"><span style="font-family:Fredoka;font-weight:700;font-size:18px">'+(S.eggQueue.length?'Chest egg ready!':eggReady?'Your egg is ready!':'Incubating egg')+'</span><div class="bar"><i style="width:'+(S.eggQueue.length?100:Math.min(100,S.eggMin/EGG_MIN*100))+'%"></i></div><span class="xs muted">'+(S.eggQueue.length?(S.eggQueue[0].min?'Guaranteed '+S.eggQueue[0].min+' or better':'Normal odds'):Math.floor(Math.min(S.eggMin,EGG_MIN))+' / '+EGG_MIN+' study minutes')+'</span>'+
  (eggReady?'<button class="btn2 acc" style="flex:none;margin-top:4px" data-a="hatch">Hatch egg</button>':'')+'</div></section>'+
  '<div class="card" style="padding:12px 14px"><span class="sm">Hatch odds'+(S.inv.lucky>0?' · '+T().boosts.lucky+' active':'')+'</span><div class="row" style="gap:6px;margin-top:8px;flex-wrap:wrap">'+odds.map(function(o){return '<span class="rar r-'+o[0]+'">'+o[0]+' '+o[1]+'%</span>';}).join("")+'<span class="shinychip">✦ Shiny 2%</span></div><div class="xs muted" style="margin-top:8px;line-height:1.6">Eggs hatch from your equipped theme. Boss pets only come from boss chests. Shinies get new colors, a shimmer, and +5% on their perk.</div></div>'+
@@ -643,15 +690,17 @@ function chapterScreen(){
  '<button class="btn2 ghost" style="width:100%;flex:none" data-a="reset">Reset demo data</button></div>';
 }
 
-function shopScreen(){
+function shopScreen(){return header()+'<div class="stack">'+shopBody()+'</div>';}
+function shopBody(){
  var t=T();
- var items=SHOP.map(function(it){var can=S.points>=it.price;return '<section class="card shopitem"><span class="ic">'+ic(it.icon)+'</span><div class="col" style="flex:1;min-width:0"><span style="font-family:Fredoka;font-weight:700;font-size:17px">'+t.boosts[it.id]+'</span><span class="xs muted">'+it.desc+'</span><span class="xs" style="margin-top:2px">Owned: '+(S.inv[it.id]||0)+'</span></div>'+
- '<button class="btn2 '+(can?'acc':'')+'" style="flex:none;width:92px" data-a="buy" data-id="'+it.id+'">'+coin(14)+it.price+'</button></section>';}).join("");
- return header()+'<div class="stack"><h1 style="font-size:28px">Shop</h1><div class="card row" style="gap:12px">'+coin(36)+'<div class="col" style="flex:1"><span style="font-family:Fredoka;font-weight:700;font-size:28px">'+fmt(S.points)+'</span><span class="xs muted">'+t.currency+' · earned only by studying</span></div><div class="col" style="align-items:flex-end;gap:4px"><span class="chip" style="font-size:12px">'+ic("star")+S.stars+' skill stars</span><span class="xs muted">Skill tree coming next</span></div></div>'+items+
- '<p class="xs muted" style="text-align:center">No real-money purchases. Every boost is earned.</p></div>';
+ var items=SHOP.map(function(it){var can=S.points>=price(it);return '<section class="card shopitem"><span class="ic">'+ic(it.icon)+'</span><div class="col" style="flex:1;min-width:0"><span style="font-family:Fredoka;font-weight:700;font-size:17px">'+boostName(it.id)+'</span><span class="xs muted">'+it.desc+'</span><span class="xs" style="margin-top:2px">'+(it.id==="night"?(nightOn()?'Active · '+timeLeft(S.nightUntil-Date.now())+' left':'Not active'):'Owned: '+(S.inv[it.id]||0))+(sk("bargain")?' · −'+(10*sk("bargain"))+'% Bargain Hunter':'')+'</span></div>'+
+ '<button class="btn2 '+(can?'acc':'')+'" style="flex:none;width:92px" data-a="buy" data-id="'+it.id+'">'+coin(14)+price(it)+'</button></section>';}).join("");
+ return '<div class="card row" style="gap:12px">'+coin(36)+'<div class="col" style="flex:1"><span style="font-family:Fredoka;font-weight:700;font-size:28px">'+fmt(S.points)+'</span><span class="xs muted">'+t.currency+' · earned only by studying</span></div><div class="col" style="align-items:flex-end;gap:4px"><span class="chip" style="font-size:12px">'+ic("star")+S.stars+' skill stars</span></div></div>'+items+
+ '<p class="xs muted" style="text-align:center">No real-money purchases. Every boost is earned.</p>';
 }
 
-function themesScreen(){
+function themesScreen(){return header()+'<div class="stack">'+themesBody()+'</div>';}
+function themesBody(){
  var hrs=S.totalMin/60;
  var cards=THEME_ORDER.map(function(k){var th=THEMES[k],un=isUnlocked(k),on=S.theme===k;
   var sp=th.species.filter(function(x){return x.rarity==="Legendary"})[0];
@@ -660,19 +709,19 @@ function themesScreen(){
    '<button class="btn2" style="flex:none;height:38px;background:#2a2a40;color:#d6d6ea;font-size:13px" data-a="unlock" data-id="'+k+'">'+ic("lock")+(+hrs.toFixed(1))+' / '+th.unlockHrs+' hrs</button>';
   return '<div class="tcard" style="background:'+th.c.card+';border-color:'+(on?th.c.accent:th.c.edge)+'"><div class="scene" style="background:'+th.c.glow+'">'+petSVG(sp,3,{sil:!un})+'</div>'+
   '<span style="font-family:Fredoka;font-weight:700;font-size:16px">'+th.name+(th.season?' <span class="xs" style="color:#ffb3ec">SEASON</span>':'')+'</span><span class="xs" style="color:'+th.c.muted+'">'+th.currency+' · '+myPets(k).length+'/'+th.species.length+' pets · boss: '+th.boss.name+'</span>'+btn+'</div>';}).join("");
- return header()+'<div class="stack"><h1 style="font-size:28px">Themes</h1>'+
- '<button class="card row" style="gap:14px;background:#3d1645;border-color:#8a3a9a;width:100%;text-align:left;color:#fff" data-a="equip" data-id="forest"><span class="ic" style="background:#6b2a7a;color:#ffd1f5">'+ic("palette")+'</span><div class="col"><span class="xs" style="color:#ffb3ec;letter-spacing:.5px">SEASON · 12 DAYS LEFT</span><span style="font-family:Fredoka;font-weight:700;font-size:18px">Enchanted Forest</span><span class="xs" style="color:#f0c7e8">Limited pet: Moonlit Fox Spirit · tap to equip</span></div></button>'+
- '<div class="grid2">'+cards+'</div><p class="xs muted" style="text-align:center">Every theme counts the same study minutes. Your points, streak and boss progress carry over.</p></div>';
+ return '<button class="card row" style="gap:14px;background:#3d1645;border-color:#8a3a9a;width:100%;text-align:left;color:#fff" data-a="equip" data-id="forest"><span class="ic" style="background:#6b2a7a;color:#ffd1f5">'+ic("palette")+'</span><div class="col"><span class="xs" style="color:#ffb3ec;letter-spacing:.5px">SEASON · 12 DAYS LEFT</span><span style="font-family:Fredoka;font-weight:700;font-size:18px">Enchanted Forest</span><span class="xs" style="color:#f0c7e8">Limited pet: Moonlit Fox Spirit · tap to equip</span></div></button>'+
+ '<div class="grid2">'+cards+'</div><p class="xs muted" style="text-align:center">Every theme counts the same study minutes. Your points, streak and boss progress carry over.</p>';
 }
 
-var SCREENS={home:homeScreen,pets:petsScreen,chapter:chapterScreen,shop:shopScreen,themes:themesScreen};
-var NAV=[["home","home","Home"],["pets","paw","Pets"],["chapter","trophy","Chapter"],["shop","bag","Shop"],["themes","palette","Themes"]];
+var SCREENS={home:homeScreen,pets:petsScreen,goals:goalsScreen,chapter:chapterScreen,you:youScreen};
+var NAV=[["home","home","Home"],["pets","paw","Pets"],["goals","flag","Goals"],["chapter","trophy","Chapter"],["you","star","You"]];
+function navDot(k){if(k==="goals")return questsClaimable()+passClaimable()>0;if(k==="pets")return S.eggQueue.length>0||S.eggMin>=EGG_MIN||S.exp.slots.some(function(x){return x&&Date.now()>=x.start+x.h*3600e3;});if(k==="chapter")return S.chests.length>0;if(k==="you")return S.stars>0||badgesClaimable()>0;return false;}
 
 function render(anim){
- applyTheme();
+ applyTheme();refreshQuests();
  var m=$("screen");
  m.innerHTML='<div class="'+(anim?'enter':'')+'">'+SCREENS[ui.tab]()+'</div>';
- $("nav").innerHTML=NAV.map(function(n){return '<button class="'+(ui.tab===n[0]?'on':'')+'" data-a="tab" data-tab="'+n[0]+'"'+(ui.tab===n[0]?' aria-current="page"':'')+'>'+ic(n[1],"")+n[2]+'</button>';}).join("");
+ $("nav").innerHTML=NAV.map(function(n){return '<button class="'+(ui.tab===n[0]?'on':'')+'" data-a="tab" data-tab="'+n[0]+'"'+(ui.tab===n[0]?' aria-current="page"':'')+'>'+ic(n[1],"")+n[2]+(navDot(n[0])?'<span class="ndot"></span>':'')+'</button>';}).join("");
 }
 
 var tt;
@@ -688,9 +737,9 @@ function feed(){
  var pet=activePet(),sp=spById(pet.s),need=NEED[pet.stage];
  if(!need){toast("Already fully evolved");return;}
  if(S.points<100){toast("Need "+(100-S.points)+" more "+T().currency+". Go study!");return;}
- var pk=perkOf(sp,pet.stage,pet.shiny),gain=Math.round(100*(pk.type==="food"?1+pk.val:1));
+ var pk=perkOf(sp,pet.stage,pet.shiny),gain=Math.round(100*(pk.type==="food"?1+pk.val:1)*(1+.1*sk("treat")));track("feed",1);
  S.points-=100;pet.food+=gain;
- if(pet.food>=need){var old=pet.stage;pet.food-=need;pet.stage++;save();render();evolveModal(sp,old,pet.stage,pet.shiny);return;}
+ if(pet.food>=need){var old=pet.stage;pet.food-=need;pet.stage++;track("evolve",1);save();render();evolveModal(sp,old,pet.stage,pet.shiny);return;}
  save();render();bump();
  var btn=$("petBtn");if(btn){btn.querySelector("svg").classList.add("squish");var f=document.createElement("span");f.className="float";f.style.left="70%";f.style.top="10%";f.textContent="+"+gain;btn.appendChild(f);}
 }
@@ -710,48 +759,78 @@ function hatchModal(){
 }
 function addPet(tk,id,stage,shiny){ensureStarter(tk);var list=S.pets[tk];for(var i=0;i<list.length;i++)if(list[i].s===id){var p=list[i];if(shiny&&!p.shiny){p.shiny=true;return{upgraded:"shiny",p:p};}return{dup:true,p:p};}
  var np={s:id,stage:stage||1,food:0};if(shiny)np.shiny=true;list.push(np);return{added:true,p:np};}
+function hatchOne(q){
+ var rar=rollRarity(q&&q.min);
+ var pool=T().species.filter(function(s){return s.rarity===rar;});
+ var sp=pool[Math.floor(Math.random()*pool.length)],shiny=(q&&q.shiny)||Math.random()<shinyChance();
+ var res=addPet(S.theme,sp.id,1,shiny),extra;
+ if(res.dup){S.points+=300;extra='Duplicate! +300 '+T().currency+' instead.';}
+ else if(res.upgraded)extra='Your '+sp.name+' turned SHINY! Perk +5%.';
+ else extra='New pet! Perk: '+perkLabel(sp,1,shiny);
+ return{sp:sp,rar:rar,shiny:shiny,res:res,extra:extra};
+}
 function crack(){
  var b=$("eggBtn");if(!b||b.dataset.done)return;b.dataset.done=1;
  b.firstChild.classList.add("shake");
  setTimeout(function(){
   var q=S.eggQueue.length?S.eggQueue.shift():null;if(!q)S.eggMin=Math.max(0,S.eggMin-EGG_MIN);
-  var usedLucky=S.inv.lucky>0,rar=rollRarity(q&&q.min);if(usedLucky)S.inv.lucky--;
-  var pool=T().species.filter(function(s){return s.rarity===rar;});
-  var sp=pool[Math.floor(Math.random()*pool.length)],shiny=Math.random()<SHINY_CHANCE;
-  var res=addPet(S.theme,sp.id,1,shiny),extra;
-  if(res.dup){S.points+=300;extra='Duplicate! You got +300 '+T().currency+' instead.';}
-  else if(res.upgraded)extra='Your '+sp.name+' turned SHINY! Perk +5%.';
-  else extra='New pet! Perk: '+perkLabel(sp,1,shiny);
-  save();
-  overlay('<div class="backdrop center"><div class="modal">'+(shiny?'<div class="shinychip" style="margin-bottom:8px">✦ SHINY ✦</div><br>':'')+'<span class="rar r-'+rar+'">'+rar+'</span><div class="reveal glow-'+rar+'" style="width:180px;height:170px;border-radius:50%;margin:16px auto;background:var(--glow);display:flex;align-items:center;justify-content:center">'+petSVG(sp,res.p.stage,{w:160,shiny:res.p.shiny})+'</div>'+
-  '<h2 style="font-size:26px">'+(shiny?'Shiny ':'')+sp.name+'</h2><p class="muted" style="font-weight:800">'+extra+'</p><div class="row gap" style="margin-top:10px">'+(res.dup?'':'<button class="btn2" data-a="setpet" data-id="'+sp.id+'" data-t="'+S.theme+'" data-close="1">Make active</button>')+'<button class="btn2 acc" data-a="close">Nice!</button></div></div></div>');
-  confetti(shiny?180:rar==="Legendary"?160:rar==="Epic"?110:70);render();
+  var usedLucky=S.inv.lucky>0,dbl=S.inv.dhatch>0,outs=[hatchOne(q)];
+  if(dbl){outs.push(hatchOne(q));S.inv.dhatch--;}
+  if(usedLucky)S.inv.lucky--;
+  track("hatch",outs.length);save();
+  var best=outs.reduce(function(a,o){return RORDER[o.rar]>RORDER[a.rar]?o:a;},outs[0]);
+  var cards=outs.map(function(o){return '<div class="col" style="align-items:center;flex:1;min-width:0">'+(o.shiny?'<span class="shinychip" style="margin-bottom:6px">✦ SHINY</span>':'')+'<span class="rar r-'+o.rar+'">'+o.rar+'</span><div class="reveal glow-'+o.rar+'" style="width:'+(dbl?130:180)+'px;height:'+(dbl?124:170)+'px;border-radius:50%;margin:12px auto;background:var(--glow);display:flex;align-items:center;justify-content:center">'+petSVG(o.sp,o.res.p.stage,{w:dbl?116:160,shiny:o.res.p.shiny})+'</div><h2 style="font-size:'+(dbl?18:26)+'px">'+(o.shiny?'Shiny ':'')+o.sp.name+'</h2><p class="xs muted" style="font-weight:800;margin:4px 0">'+o.extra+'</p></div>';}).join("");
+  overlay('<div class="backdrop center"><div class="modal">'+(dbl?'<span class="chip" style="margin-bottom:8px">'+ic("egg")+'Double Hatch!</span>':'')+'<div class="row" style="gap:10px;align-items:flex-start">'+cards+'</div><div class="row gap" style="margin-top:10px">'+(best.res.dup?'':'<button class="btn2" data-a="setpet" data-id="'+best.sp.id+'" data-t="'+S.theme+'" data-close="1">Make '+best.sp.name.split(" ")[0]+' active</button>')+'<button class="btn2 acc" data-a="close">Nice!</button></div></div></div>');
+  confetti(outs.some(function(o){return o.shiny})?180:best.rar==="Legendary"?160:best.rar==="Epic"?110:70);render();
  },1000);
 }
 
+function sessMults(o){
+ // o: {focus,broken,tide,warp,perk,buff,combo,night,buddy}
+ var L=[],m=1;
+ function add(name,v,note){if(v!==1||note){L.push([name,v,note]);m*=v;}}
+ add("Focus mode",o.focus&&!o.broken?focusMult():1,o.broken?"lost":o.focus?"":"off");
+ add(T().tide,o.tide);
+ if(o.combo)add("Combo Clock ("+o.combo+" in a row)",1+.1*o.combo);
+ if(o.night)add("Night Owl",1+nightBonus());
+ if(o.buddy)add("Study Buddy: "+o.buddy,1.15);
+ if(o.warp)add(boostName("warp"),1.2);
+ if(o.perk)add(o.perkName,pmP(o.perk,"pts"));
+ if(o.buff)add("Boss Slayers buff",1.1);
+ return{m:m,lines:L};
+}
 function preSheet(){
- var p=ui.pre,t=T(),pet=activePet(),sp=spById(pet.s),pk=curPerk();
+ var p=ui.pre,t=T(),pet=activePet(),sp=spById(pet.s),pk=curPerk(),buddy=buddyNow()||(p.bell&&S.inv.bell>0?MEMBERS[2]:null),combo=comboNow(),night=nightOn()&&isNight();
  function tog(key,title,sub){return '<button class="toggle" data-a="ptog" data-k="'+key+'" aria-pressed="'+(!!p[key])+'"><span style="flex:1"><b style="display:block;font-size:15px">'+title+'</b><span class="xs muted">'+sub+'</span></span><span class="sw"></span></button>';}
- var est=p.len*10*(p.focus?1.5:1)*tideMult()*(p.warp&&S.inv.warp>0?1.2:1)*pmP(pk,"pts")*(buffOn()?1.1:1);
- overlay('<div class="backdrop" data-a="bgclose"><div class="sheet"><div class="row between"><h2 style="font-size:24px">Ready to study?</h2><button class="btn2 ghost" style="flex:none;width:44px;height:44px" data-a="close" aria-label="Close">✕</button></div>'+
- '<div class="row" style="gap:8px;margin:12px 0 16px;flex-wrap:wrap"><span class="chip" style="background:var(--bg)">'+ic("pin")+'Mitchell Library</span><span class="chip" style="background:#0e3b33;border-color:#14998a;color:#7bf5df">'+ic("check")+'Location verified</span></div>'+
- '<span class="sm muted">Session length</span><div class="seg" style="margin:8px 0 16px">'+[25,50,90].map(function(m){return '<button class="'+(p.len===m?'on':'')+'" data-a="plen" data-m="'+m+'">'+m+' min</button>';}).join("")+'</div>'+
- '<div class="col" style="gap:8px">'+tog("focus","Focus mode · ×1.5","Leaving the app during the session cancels the bonus")+
- (S.inv.xp>0?tog("xp",t.boosts.xp+" · 2× XP","You own "+S.inv.xp):"")+(S.inv.warp>0?tog("warp",t.boosts.warp+" · +20% points","You own "+S.inv.warp):"")+'</div>'+
- '<div class="math" style="margin:14px 0"><div class="row between"><span>'+sp.name+' perk</span><span>'+perkLabel(sp,pet.stage,pet.shiny)+'</span></div>'+(buffOn()?'<div class="row between"><span>Boss Slayers buff</span><span>×1.1</span></div>':'')+'<div class="row between"><span>Boss energy</span><span>+'+Math.floor((S.energyMin+p.len)/10)+' '+energyIcon(13)+'</span></div><div class="row between tot"><span>Expected if you finish</span><span style="color:var(--coin)">'+fmt(est)+' '+t.currency+'</span></div></div>'+
+ var sm=sessMults({focus:p.focus,tide:tideMult(),warp:p.warp&&S.inv.warp>0,perk:pk,perkName:sp.name+" perk",buff:buffOn(),combo:combo,night:night,buddy:buddy});
+ var est=p.len*10*sm.m;
+ overlay('<div class="backdrop" data-a="bgclose"><div class="sheet" style="max-height:92%;overflow-y:auto"><div class="row between"><h2 style="font-size:24px">Ready to study?</h2><button class="btn2 ghost" style="flex:none;width:44px;height:44px" data-a="close" aria-label="Close">✕</button></div>'+
+ '<div class="row" style="gap:8px;margin:12px 0 12px;flex-wrap:wrap"><span class="chip" style="background:var(--bg)">'+ic("pin")+'Mitchell Library</span><span class="chip" style="background:#0e3b33;border-color:#14998a;color:#7bf5df">'+ic("check")+'Location verified</span>'+
+ (buddyNow()?'<span class="chip" style="background:var(--bg)">'+ic("users")+buddyNow()+' is studying now</span>':'')+'</div>'+
+ '<span class="sm muted">Session length</span><div class="seg" style="margin:8px 0 14px">'+[25,50,90].map(function(m){return '<button class="'+(p.len===m?'on':'')+'" data-a="plen" data-m="'+m+'">'+m+' min</button>';}).join("")+'</div>'+
+ '<div class="col" style="gap:8px">'+tog("focus","Focus mode · ×"+focusMult().toFixed(1),"Leaving the app during the session cancels the bonus")+
+ (S.inv.xp>0?tog("xp",boostName("xp")+" · 2× XP","You own "+S.inv.xp):"")+(S.inv.warp>0?tog("warp",boostName("warp")+" · +20% points","You own "+S.inv.warp):"")+
+ (!buddyNow()&&S.inv.bell>0?tog("bell","Ring Buddy Bell · +15%","Nobody's studying right now. A chapter member will join you. You own "+S.inv.bell):"")+'</div>'+
+ '<div class="math" style="margin:14px 0">'+sm.lines.map(function(l){return '<div class="row between"><span>'+l[0]+'</span><span>'+(l[2]==="off"?'off':x2(l[1]))+'</span></div>';}).join("")+
+ (!combo?'<div class="row between muted"><span>Combo Clock</span><span>start within 15 min of your last session</span></div>':'')+
+ (nightOn()&&!night?'<div class="row between muted"><span>Night Owl</span><span>works 9 pm to 4 am</span></div>':'')+
+ '<div class="row between"><span>Boss energy</span><span>+'+(Math.floor((S.energyMin+p.len)/10)+sk("battery"))+' '+energyIcon(13)+'</span></div><div class="row between tot"><span>Expected if you finish</span><span style="color:var(--coin)">'+fmt(est)+' '+t.currency+'</span></div></div>'+
  '<button class="btn3d" data-a="start">'+ic("play")+'Start '+p.len+' min</button></div></div>');
 }
 
 var LINES=["You got this!","Taking notes too...","Halfway is closer than you think","Stay with me!","Deep focus mode","Charging boss energy...","Water break soon?"];
 function startSession(){
  var p=ui.pre;
- var useXp=p.xp&&S.inv.xp>0,useWarp=p.warp&&S.inv.warp>0;
+ var useXp=p.xp&&S.inv.xp>0,useWarp=p.warp&&S.inv.warp>0,buddy=buddyNow();
+ if(!buddy&&p.bell&&S.inv.bell>0){S.inv.bell--;buddy=MEMBERS[Math.floor(Math.random()*MEMBERS.length)];}
  if(useXp)S.inv.xp--;if(useWarp)S.inv.warp--;save();
  var pet=activePet(),sp=spById(pet.s);
- sess={len:p.len*60,el:0,run:true,speed:1,focus:p.focus,broken:false,xp:useXp,warp:useWarp,tide:tideMult(),buff:buffOn(),last:Date.now(),line:0,perk:perkOf(sp,pet.stage,pet.shiny),sp:sp,stage:pet.stage,shiny:pet.shiny};
+ sess={len:p.len*60,el:0,run:true,speed:1,focus:p.focus,broken:false,xp:useXp,warp:useWarp,tide:tideMult(),buff:buffOn(),last:Date.now(),line:0,perk:perkOf(sp,pet.stage,pet.shiny),sp:sp,stage:pet.stage,shiny:pet.shiny,combo:comboNow(),night:nightOn()&&isNight(),buddy:buddy,startTs:Date.now()};
+ sess.perkName=sp.name+' ('+STAGE_NAME[pet.stage]+')';
  var t=T();
  overlay('<div class="session"><div class="row between" style="width:100%"><span class="chip">'+ic("pin")+'Mitchell Library</span><button class="chip" id="spd" data-a="speed" style="cursor:pointer">Test speed 1×</button></div>'+
- '<span id="fstat" class="chip" style="'+(sess.focus?'background:#0e3b33;border-color:#14998a;color:#7bf5df':'')+'">'+ic(sess.focus?"lock":"bolt")+(sess.focus?'Focus mode ×1.5 active':'Focus mode off')+'</span>'+
+ '<span id="fstat" class="chip" style="'+(sess.focus?'background:#0e3b33;border-color:#14998a;color:#7bf5df':'')+'">'+ic(sess.focus?"lock":"bolt")+(sess.focus?'Focus mode ×'+focusMult().toFixed(1)+' active':'Focus mode off')+'</span>'+
+ ((sess.combo||sess.night||sess.buddy)?'<div class="row" style="gap:6px;flex-wrap:wrap;justify-content:center">'+(sess.combo?'<span class="chip" style="font-size:12px">'+ic("waves")+'Combo ×'+(1+.1*sess.combo).toFixed(1)+'</span>':'')+(sess.night?'<span class="chip" style="font-size:12px">'+ic("moon")+'Night Owl</span>':'')+(sess.buddy?'<span class="chip" style="font-size:12px">'+ic("users")+sess.buddy+' is studying too</span>':'')+'</div>':'')+
  '<div class="ring"><svg viewBox="0 0 250 250" aria-hidden="true"><circle cx="125" cy="125" r="108" fill="none" stroke="var(--track)" stroke-width="18"/><circle id="prog" cx="125" cy="125" r="108" fill="none" stroke="var(--accent)" stroke-width="18" stroke-linecap="round" stroke-dasharray="678.6" stroke-dashoffset="678.6" transform="rotate(-90 125 125)" style="transition:stroke-dashoffset .3s linear"/></svg><div class="t"><b id="tm">'+p.len+':00</b><span class="sm muted">of '+p.len+' min</span></div></div>'+
  '<div class="row" style="gap:10px;width:100%"><span class="bob" style="display:block">'+petSVG(sp,pet.stage,{w:90,shiny:pet.shiny})+'</span><div class="col" style="gap:6px"><span class="bubble" id="line">'+LINES[0]+'</span><span class="xs muted">'+perkLabel(sp,pet.stage,pet.shiny)+' active</span></div></div>'+
  '<div class="grid3" style="width:100%"><div class="stat"><b id="earn" style="color:var(--coin)">+0</b><span class="xs muted">'+t.currency+'</span></div><div class="stat"><b id="mult" style="color:var(--accent)">×1</b><span class="xs muted">Multiplier</span></div><div class="stat"><b id="en" style="color:#ffd23f">+0</b><span class="xs muted">Boss energy</span></div></div>'+
@@ -759,7 +838,7 @@ function startSession(){
  clearInterval(timer);timer=setInterval(tick,200);tick();
 }
 function pm(s,type){return pmP(s.perk,type);}
-function curMult(){return (sess.focus&&!sess.broken?1.5:1)*sess.tide*(sess.warp?1.2:1)*pm(sess,"pts")*(sess.buff?1.1:1);}
+function curMult(){return sessMults(sess).m;}
 function tick(){
  if(!sess)return;var now=Date.now(),dt=(now-sess.last)/1000;sess.last=now;
  if(sess.run)sess.el=Math.min(sess.len,sess.el+dt*sess.speed);
@@ -780,27 +859,27 @@ function finish(done){
  clearInterval(timer);var s=sess;sess=null;
  var mins=Math.floor(s.el/60),t=T();
  if(mins<1){overlay('<div class="backdrop center"><div class="modal"><h2 style="font-size:22px">Session too short</h2><p class="muted" style="font-weight:700">Study for at least 1 minute to earn '+t.currency+'.</p><button class="btn3d" style="height:56px" data-a="close">OK</button></div></div>');render();return;}
- var fm=s.focus&&!s.broken?1.5:1,wm=s.warp?1.2:1,ppm=pm(s,"pts"),bm=s.buff?1.1:1,mult=fm*s.tide*wm*ppm*bm,pts=Math.round(mins*10*mult);
- var xp=Math.round(mins*10*(s.xp?2:1)*pm(s,"xp")),eggGain=Math.round(mins*pm(s,"egg")*10)/10;
+ var sm=sessMults(s),pts=Math.round(mins*10*sm.m);
+ var xp=Math.round(mins*10*(s.xp?2:1)*pm(s,"xp")),eggGain=Math.round(mins*pm(s,"egg")*(1+.1*sk("egg"))*10)/10;
  var lvlBefore=level();
- S.energyMin+=mins;var en=Math.floor(S.energyMin/10);S.energyMin-=en*10;S.energy+=en;
+ S.energyMin+=mins;var en=Math.floor(S.energyMin/10);S.energyMin-=en*10;en+=sk("battery");S.energy+=en;
+ var passXp=mins*2;S.pass.xp=(S.pass.xp||0)+passXp;
+ if(done){S.combo={n:Math.min(comboMax(),(s.combo||0)+1),lastEnd:Date.now()};S.stats.maxCombo=Math.max(S.stats.maxCombo||0,S.combo.n);}else S.combo={n:0,lastEnd:0};
  S.points+=pts;S.xp+=xp;S.totalMin+=mins;S.weekMin+=mins;S.eggMin=Math.min(EGG_MIN,S.eggMin+eggGain);S.today.n++;S.lastChapterStudy=Date.now();
  var streakMsg="";
  if(S.lastStudy!==dstr()){S.streak++;S.lastStudy=dstr();streakMsg='<div class="row between"><span>Streak</span><span>'+flame()+' '+S.streak+' days</span></div>';}
+ S.stats.bestStreak=Math.max(S.stats.bestStreak||0,S.streak);
+ var lvGain=level()-lvlBefore;if(lvGain>0)S.stars+=lvGain;
+ track("min",mins);track("session",1);track("day",1);if(s.focus&&!s.broken)track("focus",1);if(isNight(new Date(s.startTs)))track("night",1);
  save();
  var pName=s.sp.name+' ('+STAGE_NAME[s.stage]+')';
- var lines='<div class="row between"><span>'+mins+' min × 10 base</span><span>'+fmt(mins*10)+'</span></div>'+
- '<div class="row between"><span>Focus mode</span><span>'+x2(fm)+(s.broken?' (lost)':'')+'</span></div>'+
- '<div class="row between"><span>'+t.tide+'</span><span>'+x2(s.tide)+'</span></div>'+
- (s.warp?'<div class="row between"><span>'+t.boosts.warp+'</span><span>×1.2</span></div>':'')+
- (ppm>1?'<div class="row between"><span>'+pName+'</span><span>'+x2(ppm)+'</span></div>':'')+
- (s.buff?'<div class="row between"><span>Boss Slayers buff</span><span>×1.1</span></div>':'')+
+ var lines='<div class="row between"><span>'+mins+' min × 10 base</span><span>'+fmt(mins*10)+'</span></div>'+sm.lines.map(function(l){return '<div class="row between"><span>'+l[0]+'</span><span>'+(l[2]==="off"?'off':x2(l[1])+(l[2]==="lost"?' (lost)':''))+'</span></div>';}).join("")+
  '<div class="row between tot"><span>'+t.currency+' earned</span><span style="color:var(--coin)">+'+fmt(pts)+'</span></div>';
  var perkNote=(s.perk.type!=="pts"&&s.perk.type!=="dual")?'<div class="row between" style="margin-top:6px"><span>'+pName+' perk</span><span>'+perkLabel(s.sp,s.stage,s.shiny)+'</span></div>':'';
- overlay('<div class="backdrop center"><div class="modal"><span class="rar r-Legendary">'+(done?'Session complete':'Session ended')+'</span><h2 style="font-size:26px;margin:12px 0 4px">+'+fmt(pts)+' '+t.currency+'</h2><p class="muted" style="font-weight:700;margin:0 0 12px">+'+fmt(xp)+' XP'+(s.xp?' (2× potion)':'')+(level()>lvlBefore?' · Level up! You are now level '+level():'')+'</p>'+
- '<div class="math">'+lines+perkNote+'<div class="row between" style="margin-top:6px"><span>Boss energy</span><span>+'+en+' '+energyIcon(13)+' ('+S.energy+' total)</span></div><div class="row between"><span>Egg progress</span><span>+'+eggGain+' → '+Math.floor(S.eggMin)+' / '+EGG_MIN+'</span></div>'+streakMsg+'</div>'+
+ overlay('<div class="backdrop center"><div class="modal"><span class="rar r-Legendary">'+(done?'Session complete':'Session ended')+'</span><h2 style="font-size:26px;margin:12px 0 4px">+'+fmt(pts)+' '+t.currency+'</h2><p class="muted" style="font-weight:700;margin:0 0 12px">+'+fmt(xp)+' XP'+(s.xp?' (2× potion)':'')+(lvGain>0?' · Level up! Level '+level()+' (+'+lvGain+' skill star'+(lvGain>1?'s':'')+')':'')+'</p>'+
+ '<div class="math">'+lines+perkNote+'<div class="row between" style="margin-top:6px"><span>Boss energy</span><span>+'+en+' '+energyIcon(13)+' ('+S.energy+' total)</span></div><div class="row between"><span>Egg progress</span><span>+'+eggGain+' → '+Math.floor(S.eggMin)+' / '+EGG_MIN+'</span></div><div class="row between"><span>Semester Pass</span><span>+'+passXp+' XP</span></div>'+(done?'<div class="row between"><span>Combo Clock</span><span>'+S.combo.n+' in a row · next within 15 min</span></div>':'')+streakMsg+'</div>'+
  '<div class="row gap" style="margin-top:14px"><button class="btn2" data-a="collect">Collect</button>'+(en>0?'<button class="btn2" style="background:#ff3b5c;color:#fff;border-bottom-color:#9a1a32" data-a="arena">'+ic("sword")+'Use energy</button>':'')+'</div></div></div>');
- confetti(level()>lvlBefore?140:80);
+ confetti(lvGain>0?140:80);
 }
 
 /* ---------- boss raid ---------- */
@@ -825,7 +904,7 @@ function arenaHTML(){
  '<div class="row between xs" style="color:#ffc6d2"><span id="hpTxt">'+fmt(b.hp)+' / '+fmt(b.max)+' HP</span><span>'+(buffOn()?'Boss Slayers active · ':'')+'Heals 5% after 12 hrs of no studying</span></div>'+
  '<div class="stagewrap" id="stage"><button class="bossbox'+(ph===3?' rage':'')+'" id="bossBox" data-a="hit" aria-label="Attack '+bossName()+'"><div class="bossart" id="bossArt">'+bossSVG(S.theme,ph)+'</div></button><button class="weak" id="weak" data-a="crit" aria-label="Weak spot, double damage" style="left:50%;top:40%"></button>'+
  '<div class="petf" id="petF">'+petSVG(sp,pet.stage,{w:96,shiny:pet.shiny})+'</div></div>'+
- '<div class="xs muted" style="text-align:center">Tap the boss to attack (1 '+energyIcon(12)+' = 10 damage) · hit the glowing weak spot for 2× · '+sp.name+' adds +'+petDmg()+' per hit</div>'+
+ '<div class="xs muted" style="text-align:center">Tap the boss to attack (1 '+energyIcon(12)+' = '+hitDmg()+' damage) · hit the glowing weak spot for ×'+critMult()+' · '+sp.name+' adds +'+petDmg()+' per hit</div>'+
  '<div class="feed" id="feed"><div>'+ic("flag")+' The raid is live. Your chapter is fighting!</div></div>'+
  '<div class="tierline t-'+pt.t+'" id="tierTxt">Your damage: '+fmt(b.contrib.you||0)+' · '+pt.why+'</div></div>';
 }
@@ -855,7 +934,7 @@ function updArena(before){
 function attack(crit,e){
  if(S.boss.hp<=0)return;
  if(S.energy<=0){var c=$("enChip");c.classList.remove("empty");void c.offsetWidth;c.classList.add("empty");toast("Out of energy. Study 10 minutes for 1 more!");return;}
- S.energy--;var before=phase(),dmg=crit?20:10,pd=petDmg();
+ S.energy--;var before=phase(),dmg=Math.round(hitDmg()*(crit?critMult():1)),pd=petDmg();track("energy",1);if(crit)track("crit",1);track("dmg",dmg+pd);
  var st=$("stage").getBoundingClientRect(),xp=50,yp=40;
  if(e&&e.clientX){xp=(e.clientX-st.left)/st.width*100;yp=(e.clientY-st.top)/st.height*100;}
  var dealt=dealDamage("you",dmg);setTimeout(function(){if(S.boss.hp>0){dealDamage("you",pd);floatDmg(30,62,"+"+pd,"pet");updArena(phase());save();}},140);
@@ -888,14 +967,14 @@ function chestSVG(tier,open){var c=CHEST[tier];
  (open?'<ellipse cx="80" cy="64" rx="50" ry="10" fill="#fff8c0"/><g transform="rotate(-38 22 62)"><rect x="18" y="30" width="124" height="34" rx="14" fill="'+c.main+'" stroke="'+c.dark+'" stroke-width="4"/><rect x="70" y="30" width="20" height="34" fill="'+c.band+'" stroke="'+c.dark+'" stroke-width="3"/></g>':
  '<rect x="18" y="34" width="124" height="34" rx="14" fill="'+c.main+'" stroke="'+c.dark+'" stroke-width="4"/><rect x="70" y="34" width="20" height="34" fill="'+c.band+'" stroke="'+c.dark+'" stroke-width="3"/><circle cx="80" cy="68" r="10" fill="'+c.band+'" stroke="'+c.dark+'" stroke-width="3"/><rect x="77" y="66" width="6" height="8" rx="2" fill="'+c.dark+'"/><path d="M34 42q10-4 20 0" stroke="#fff" stroke-width="4" stroke-linecap="round" opacity=".5"/>')+'</svg>';}
 function rnd(a,b){return a+Math.floor(Math.random()*(b-a+1));}
-function randBoost(){var ids=["shield","xp","warp","lucky"];return ids[Math.floor(Math.random()*ids.length)];}
+function randBoost(){var ids=["shield","xp","warp","lucky","dhatch","bell"];return ids[Math.floor(Math.random()*ids.length)];}
 function genLoot(c){
  var t=THEMES[c.theme]||T(),items=[],pet=activePet(),psp=spById(pet.s);
  var pts=c.tier==="gold"?2000:c.tier==="silver"?rnd(800,1200):rnd(300,500);S.points+=pts;
  items.push({ic:coin(34),label:'+'+fmt(pts)+' '+T().currency,sub:'Points'});
- if(c.tier==="bronze"){var ev=addFood(pet,300);items.push({ic:petSVG(psp,pet.stage,{w:44,shiny:pet.shiny}),label:'+300 food',sub:psp.name+(ev?' evolved!':'')});}
+ if(c.tier==="bronze"){var ev=addFood(pet,300);if(ev)track("evolve",1);items.push({ic:petSVG(psp,pet.stage,{w:44,shiny:pet.shiny}),label:'+300 food',sub:psp.name+(ev?' evolved!':'')});}
  if(c.tier!=="bronze"){S.stars++;items.push({ic:'<span style="color:#ffd23f">'+ic("star","")+'</span>',label:'Skill star',sub:'Spend it in the skill tree (next update)'});}
- var nb=c.tier==="gold"?2:c.tier==="silver"?1:0;for(var i=0;i<nb;i++){var bid=randBoost();S.inv[bid]=(S.inv[bid]||0)+1;var it=SHOP.filter(function(x){return x.id===bid})[0];items.push({ic:'<span style="color:var(--accent)">'+ic(it.icon,"")+'</span>',label:T().boosts[bid],sub:it.desc});}
+ var nb=c.tier==="gold"?2:c.tier==="silver"?1:0;for(var i=0;i<nb;i++){var bid=randBoost();S.inv[bid]=(S.inv[bid]||0)+1;var it=SHOP.filter(function(x){return x.id===bid})[0];items.push({ic:'<span style="color:var(--accent)">'+ic(it.icon,"")+'</span>',label:boostName(bid),sub:it.desc});}
  if(c.tier!=="bronze"){var mn=c.tier==="gold"?"Rare":null;S.eggQueue.push({min:mn});items.push({ic:eggSVG(34,"",!!mn),label:mn?'Rare+ egg':'Mystery egg',sub:mn?'Guaranteed Rare or better':'Hatch it from Home or Pets',cls:mn?'goldglow':''});}
  var base={bronze:.01,silver:.04,gold:.15}[c.tier],chance=Math.min(.5,base*(1+.1*(c.n-1))),pity=c.tier==="gold"&&S.goldNoPet>=7;
  if(pity||Math.random()<chance){var tk=S.theme,bp=spById(THEMES[tk].bossPet,tk),shiny=Math.random()<SHINY_CHANCE,res=addPet(tk,bp.id,1,shiny),lbl;
@@ -907,7 +986,7 @@ function genLoot(c){
 var chestUI=null;
 function openChest(){
  stopArena();if(!S.chests.length){closeOverlay();render();return;}
- var c=S.chests.shift();var loot=genLoot(c);chestUI={c:c,loot:loot,taps:0};
+ var c=S.chests.shift();track("chests",1);var loot=genLoot(c);chestUI={c:c,loot:loot,taps:0};
  var pity=c.tier==="gold"?'<div class="xs muted" style="margin-top:6px">Boss pet chance '+pct(Math.min(.5,.15*(1+.1*(c.n-1))))+' · guaranteed by gold chest #8 ('+S.goldNoPet+'/7 so far)</div>':'';
  overlay('<div class="backdrop center"><div class="modal" id="chestModal"><span class="rar" style="background:'+CHEST[c.tier].main+';color:#2a1a00">'+TIERNAME[c.tier]+' chest · Boss #'+c.n+'</span><div class="chestwrap" id="chestWrap"><button class="chestbtn idle" id="chestBtn" data-a="tapchest" aria-label="Tap to open the chest">'+chestSVG(c.tier,false)+'</button></div><p class="muted" id="chestHint" style="font-weight:800;margin:4px 0 0">Tap the chest 3 times to open it</p>'+pity+'<div id="lootList" class="col" style="gap:8px;margin-top:12px"></div><div id="chestBtns"></div></div></div>');
 }
@@ -925,6 +1004,227 @@ function tapChest(){
   render();
  },330);
 }
+
+/* ================= ROUND 2: skills, boosts, quests, badges, pass, expeditions ================= */
+var SKILLS=[
+ {branch:"Scholar",color:"#2fe0c8",icon:"potion",nodes:[
+  {id:"focus",name:"Deep Focus",max:3,eff:function(r){return "Focus mode ×"+(1.5+.1*r).toFixed(1);}},
+  {id:"combo",name:"Combo Master",max:2,eff:function(r){return "Combo Clock up to +"+(30+10*r)+"%";}},
+  {id:"owl",name:"Night Owl Pro",max:2,eff:function(r){return "Night Owl +"+(25+5*r)+"%";}}]},
+ {branch:"Tamer",color:"#ffb43b",icon:"paw",nodes:[
+  {id:"egg",name:"Egg Warmer",max:3,eff:function(r){return "+"+(10*r)+"% egg speed";}},
+  {id:"explorer",name:"Explorer",max:2,eff:function(r){return (1+r)+" expedition slot"+(r?"s":"");}},
+  {id:"treat",name:"Treat Chef",max:3,eff:function(r){return "+"+(10*r)+"% food from feeding";}},
+  {id:"lucky",name:"Lucky Charm",max:2,eff:function(r){return (2+r)+"% shiny chance";}}]},
+ {branch:"Warrior",color:"#ff3b5c",icon:"sword",nodes:[
+  {id:"power",name:"Power Strike",max:3,eff:function(r){return (10+2*r)+" damage per hit";}},
+  {id:"sharp",name:"Sharp Eye",max:2,eff:function(r){return "Weak spot ×"+(2+.5*r);}},
+  {id:"battery",name:"Battery",max:2,eff:function(r){return "+"+r+" bonus energy per session";}}]},
+ {branch:"Economy",color:"#b3a6ff",icon:"bag",nodes:[
+  {id:"bargain",name:"Bargain Hunter",max:2,eff:function(r){return "Shop prices −"+(10*r)+"%";}},
+  {id:"iron",name:"Iron Streak",max:2,eff:function(r){return r===0?"Shields cover 1 missed day":r===1?"Shields cover 2 missed days":"2 days + a free shield every Monday";}}]}
+];
+function sk(id){return (S.skills&&S.skills[id])||0;}
+function skNode(id){for(var b=0;b<SKILLS.length;b++)for(var i=0;i<SKILLS[b].nodes.length;i++)if(SKILLS[b].nodes[i].id===id)return{b:SKILLS[b],i:i,n:SKILLS[b].nodes[i]};}
+function skUnlocked(id){var x=skNode(id);return x.i===0||sk(x.b.nodes[x.i-1].id)>=1;}
+function shinyChance(){return SHINY_CHANCE+.01*sk("lucky");}
+function focusMult(){return 1.5+.1*sk("focus");}
+function comboMax(){return 3+sk("combo");}
+function nightBonus(){return .25+.05*sk("owl");}
+function slotsCount(){return 1+sk("explorer");}
+function price(it){return Math.round(it.price*(1-.1*sk("bargain")));}
+function critMult(){return 2+.5*sk("sharp");}
+function hitDmg(){return 10+2*sk("power");}
+function isNight(d){var h=(d||new Date()).getHours();return h>=21||h<4;}
+function nightOn(){return Date.now()<(S.nightUntil||0);}
+function comboReady(){return S.combo&&S.combo.n>0&&Date.now()-S.combo.lastEnd<=15*60e3;}
+function comboNow(){return comboReady()?Math.min(S.combo.n,comboMax()):0;}
+function buddyNow(){var slot=Math.floor(Date.now()/(30*60e3)),r=((slot*9301+49297)%233280)/233280;return r<.6?MEMBERS[slot%MEMBERS.length]:null;}
+
+/* ---------- quests ---------- */
+var QPOOL={day:[
+ {id:"d_min",ev:"min",goal:50,label:"Study 50 minutes",pts:150,xp:100},
+ {id:"d_ses",ev:"session",goal:2,label:"Finish 2 study sessions",pts:150,xp:100},
+ {id:"d_crit",ev:"crit",goal:5,label:"Hit the boss's weak spot 5 times",pts:120,xp:100},
+ {id:"d_feed",ev:"feed",goal:3,label:"Feed your pet 3 times",pts:100,xp:100},
+ {id:"d_en",ev:"energy",goal:5,label:"Spend 5 boss energy",pts:120,xp:100},
+ {id:"d_focus",ev:"focus",goal:1,label:"Finish a session without losing Focus mode",pts:150,xp:100},
+ {id:"d_exp",ev:"expstart",goal:1,label:"Send a pet on an expedition",pts:100,xp:100}],
+week:[
+ {id:"w_min",ev:"min",goal:300,label:"Study 5 hours",pts:600,xp:300},
+ {id:"w_dmg",ev:"dmg",goal:300,label:"Deal 300 boss damage",pts:500,xp:300},
+ {id:"w_hatch",ev:"hatch",goal:2,label:"Hatch 2 eggs",pts:400,xp:300},
+ {id:"w_evo",ev:"evolve",goal:1,label:"Evolve a pet",pts:400,xp:300},
+ {id:"w_days",ev:"day",goal:4,label:"Study on 4 different days",pts:600,xp:300},
+ {id:"w_crit",ev:"crit",goal:25,label:"Hit 25 weak spots",pts:500,xp:300},
+ {id:"w_expd",ev:"expdone",goal:3,label:"Complete 3 expeditions",pts:400,xp:300}]};
+function weekKey(){var d=new Date(),day=(d.getDay()+6)%7;d.setDate(d.getDate()-day);return dstr(d);}
+function pick3(pool){var a=pool.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a.slice(0,3).map(function(q){return{id:q.id,prog:0,claimed:false};});}
+function refreshQuests(){
+ S.quests=S.quests||{};
+ if(!S.quests.day||S.quests.day.date!==dstr())S.quests.day={date:dstr(),list:pick3(QPOOL.day)};
+ if(!S.quests.week||S.quests.week.key!==weekKey())S.quests.week={key:weekKey(),list:pick3(QPOOL.week),days:[]};
+}
+function qdef(kind,id){return QPOOL[kind].filter(function(q){return q.id===id})[0];}
+function track(ev,n){
+ n=n||1;S.stats=S.stats||{};
+ if(ev==="day"){refreshQuests();var w=S.quests.week;if(w.days.indexOf(dstr())>=0)return;w.days.push(dstr());n=1;}
+ S.stats[ev]=(S.stats[ev]||0)+n;
+ refreshQuests();
+ ["day","week"].forEach(function(k){S.quests[k].list.forEach(function(q){var d=qdef(k,q.id);if(d&&d.ev===ev&&!q.claimed){var was=q.prog;q.prog=Math.min(d.goal,q.prog+n);if(was<d.goal&&q.prog>=d.goal)setTimeout(function(){toast("Quest complete: "+d.label)},300);}});});
+ checkBadges();
+}
+function questsClaimable(){refreshQuests();var c=0;["day","week"].forEach(function(k){S.quests[k].list.forEach(function(q){var d=qdef(k,q.id);if(d&&q.prog>=d.goal&&!q.claimed)c++;});});return c;}
+function timeLeft(ms){ms=Math.max(0,ms);var h=Math.floor(ms/3600e3),m=Math.floor(ms%3600e3/60e3),s=Math.floor(ms%60e3/1e3);if(h>=24)return Math.floor(h/24)+"d "+(h%24)+"h";if(h)return h+"h "+m+"m";return m+"m "+String(s).padStart(2,"0")+"s";}
+function nextMidnight(){var d=new Date();d.setHours(24,0,0,0);return d.getTime();}
+function nextMonday(){var d=new Date(),day=(d.getDay()+6)%7;d.setDate(d.getDate()+(7-day));d.setHours(0,0,0,0);return d.getTime();}
+
+/* ---------- semester pass ---------- */
+var PASS_XP=1000,PASS_END=new Date(2026,11,12).getTime();
+function passTier(){return Math.min(30,Math.floor((S.pass.xp||0)/PASS_XP));}
+function passReward(t){
+ if(t===30)return{k:"egg",min:"Legendary",shiny:true,label:"Shiny Legendary egg",big:true};
+ if(t===20)return{k:"egg",min:"Legendary",label:"Legendary egg",big:true};
+ if(t===10)return{k:"egg",min:"Epic",label:"Epic+ egg",big:true};
+ if(t%5===0)return{k:"star",n:2,label:"2 skill stars"};
+ var m=t%4;
+ if(m===1)return{k:"pts",n:300+t*20,label:"+"+fmt(300+t*20)+" points"};
+ if(m===2){var ids=["shield","xp","warp","lucky","dhatch","bell"],id=ids[t%6];return{k:"boost",id:id,label:boostName(id)};}
+ if(m===3)return{k:"food",n:400,label:"+400 pet food"};
+ return{k:"energy",n:10,label:"+10 boss energy"};
+}
+function passClaimable(){var c=0;for(var t=1;t<=passTier();t++)if(S.pass.claimed.indexOf(t)<0)c++;return c;}
+function giveReward(r){
+ if(r.k==="pts")S.points+=r.n;
+ else if(r.k==="star")S.stars+=r.n;
+ else if(r.k==="boost")S.inv[r.id]=(S.inv[r.id]||0)+1;
+ else if(r.k==="food"){var p=activePet();if(addFood(p,r.n))track("evolve",1);}
+ else if(r.k==="energy")S.energy+=r.n;
+ else if(r.k==="egg")S.eggQueue.push({min:r.min||null,shiny:!!r.shiny});
+}
+function rewardIcon(r,sz){sz=sz||28;
+ if(r.k==="pts")return coin(sz);if(r.k==="star")return '<span style="color:#ffd23f">'+ic("star","")+'</span>';
+ if(r.k==="boost"){var it=SHOP.filter(function(x){return x.id===r.id})[0];return '<span style="color:var(--accent)">'+ic(it?it.icon:"bolt","")+'</span>';}
+ if(r.k==="food")return '<span style="color:#8ff05a">'+ic("paw","")+'</span>';
+ if(r.k==="energy")return energyIcon(sz);
+ if(r.k==="egg")return eggSVG(sz,"",true);return "";}
+
+/* ---------- badges ---------- */
+function totalOwned(){return THEME_ORDER.reduce(function(a,k){return a+myPets(k).length;},0);}
+function anyPet(fn){return THEME_ORDER.some(function(k){return myPets(k).some(fn);});}
+function bestTheme(){return THEME_ORDER.reduce(function(a,k){return Math.max(a,myPets(k).length);},0);}
+var BADGES=[
+ {id:"first",name:"First Steps",desc:"Finish your first session",icon:"play",col:"#2fe0c8",cur:function(){return S.stats.session||0;},goal:1},
+ {id:"hrs10",name:"Bookworm",desc:"Study 10 hours total",icon:"potion",col:"#4cc9f0",cur:function(){return S.totalMin/60;},goal:10},
+ {id:"hrs50",name:"Scholar",desc:"Study 50 hours total",icon:"potion",col:"#3d9bff",cur:function(){return S.totalMin/60;},goal:50},
+ {id:"hrs200",name:"Dean's List",desc:"Study 200 hours total",icon:"trophy",col:"#ffd23f",cur:function(){return S.totalMin/60;},goal:200},
+ {id:"streak7",name:"On Fire",desc:"Reach a 7-day streak",icon:"bolt",col:"#ff7a3d",cur:function(){return S.stats.bestStreak||0;},goal:7},
+ {id:"streak30",name:"Unstoppable",desc:"Reach a 30-day streak",icon:"bolt",col:"#ff3b5c",cur:function(){return S.stats.bestStreak||0;},goal:30},
+ {id:"kill1",name:"Boss Slayer",desc:"Defeat a chapter boss",icon:"sword",col:"#ff6a8a",cur:function(){return S.kills;},goal:1},
+ {id:"kill10",name:"Raid Leader",desc:"Defeat 10 chapter bosses",icon:"sword",col:"#ff3b5c",cur:function(){return S.kills;},goal:10},
+ {id:"crit100",name:"Sharpshooter",desc:"Hit 100 weak spots",icon:"spark",col:"#ffd23f",cur:function(){return S.stats.crit||0;},goal:100},
+ {id:"hatch10",name:"Hatcher",desc:"Hatch 10 eggs",icon:"egg",col:"#ffe0a0",cur:function(){return S.stats.hatch||0;},goal:10},
+ {id:"asc",name:"Ascension",desc:"Get any pet to Ascended",icon:"star",col:"#ffb320",cur:function(){return anyPet(function(p){return p.stage>=3;})?1:0;},goal:1},
+ {id:"shiny",name:"Shiny Hunter",desc:"Own a shiny pet",icon:"spark",col:"#ff6ad5",cur:function(){return anyPet(function(p){return p.shiny;})?1:0;},goal:1},
+ {id:"pets50",name:"Collector",desc:"Own 50 different pets",icon:"paw",col:"#8ff05a",cur:totalOwned,goal:50},
+ {id:"theme",name:"Completionist",desc:"Collect all 19 pets in one theme",icon:"check",col:"#2fbf71",cur:bestTheme,goal:19},
+ {id:"exp10",name:"Explorer",desc:"Finish 10 expeditions",icon:"flag",col:"#b3a6ff",cur:function(){return S.stats.expdone||0;},goal:10},
+ {id:"night",name:"Night Owl",desc:"Finish a session after 9 pm",icon:"clock",col:"#7a8cff",cur:function(){return S.stats.night||0;},goal:1},
+ {id:"combo",name:"Combo King",desc:"Reach a 3-session combo",icon:"waves",col:"#2fe0c8",cur:function(){return S.stats.maxCombo||0;},goal:3},
+ {id:"chest",name:"Treasure Hunter",desc:"Open 10 boss chests",icon:"chest",col:"#ffc83a",cur:function(){return S.stats.chests||0;},goal:10}
+];
+function badgeDone(b){return b.cur()>=b.goal;}
+function badgesClaimable(){return BADGES.filter(function(b){return badgeDone(b)&&!S.badges[b.id];}).length;}
+function checkBadges(){S.badgeSeen=S.badgeSeen||{};BADGES.forEach(function(b){if(badgeDone(b)&&!S.badgeSeen[b.id]){S.badgeSeen[b.id]=1;setTimeout(function(){toast("Badge unlocked: "+b.name+"!")},900);}});}
+
+/* ---------- expeditions ---------- */
+var EXPL={ocean:["Coral Reef","Kelp Forest","Abyss Trench"],zoo:["Petting Zoo","Open Savanna","Safari Night"],dino:["Fern Valley","Tar Pits","Volcano Rim"],olympus:["The Agora","The Labyrinth","Mount Olympus"],forest:["Mushroom Ring","Moonlit Glade","Elder Grove"],jungle:["River Bank","High Canopy","Lost Temple"],galaxy:["Moon Base","Asteroid Belt","Nebula Core"],candy:["Lollipop Lane","Gumdrop Hills","Chocolate River"],arctic:["Ice Floe","Glacier Cave","Aurora Peak"],haunted:["Garden Maze","Old Crypt","Phantom Ballroom"]};
+var EXP_H=[2,4,8],EXP_EGG={2:.04,4:.1,8:.22};
+function busyKey(tk,id){return tk+":"+id;}
+function isBusy(tk,id){return (S.exp.slots||[]).some(function(x){return x&&x.tk===tk&&x.s===id;});}
+function eligiblePets(){var out=[];THEME_ORDER.forEach(function(k){myPets(k).forEach(function(p){if(k===S.theme&&S.active[S.theme]===p.s)return;if(isBusy(k,p.s))return;out.push({tk:k,p:p,sp:spById(p.s,k)});});});
+ out.sort(function(a,b){return RORDER[b.sp.rarity]-RORDER[a.sp.rarity]||b.p.stage-a.p.stage;});return out;}
+function expEst(sp,stage,h){var ri=RORDER[sp.rarity];return{pts:Math.round(h*80*(1+ri*.15)),food:Math.round(h*60*(1+.25*(stage-1))),egg:Math.min(.6,EXP_EGG[h]+ri*.02),en:h/2};}
+
+/* ---------- screens ---------- */
+function seg(name,cur,opts){return '<div class="seg2" role="tablist">'+opts.map(function(o){return '<button role="tab" aria-selected="'+(cur===o[0])+'" class="'+(cur===o[0]?'on':'')+'" data-a="seg" data-k="'+name+'" data-v="'+o[0]+'">'+o[1]+(o[2]?'<span class="dot"></span>':'')+'</button>';}).join("")+'</div>';}
+
+function goalsScreen(){
+ refreshQuests();var tab=ui.goalTab||"quests";
+ var h=header()+'<div class="stack"><h1 style="font-size:28px">Goals</h1>'+seg("goalTab",tab,[["quests","Quests",questsClaimable()>0],["pass","Semester Pass",passClaimable()>0]]);
+ if(tab==="quests"){
+  function qcard(kind,q){var d=qdef(kind,q.id);if(!d)return "";var done=q.prog>=d.goal,pc=Math.min(100,q.prog/d.goal*100);
+   return '<div class="card qcard'+(q.claimed?' claimed':'')+'"><div class="row" style="gap:12px"><span class="ic" style="width:44px;height:44px;'+(done?'background:var(--accent);color:var(--onAccent)':'')+'">'+ic(done?"check":({min:"clock",session:"play",crit:"spark",feed:"paw",energy:"bolt",focus:"lock",expstart:"flag",dmg:"sword",hatch:"egg",evolve:"star",day:"calendar",expdone:"flag"}[d.ev]||"star"))+'</span><div class="col" style="flex:1;min-width:0;gap:5px"><span style="font-weight:900;font-size:14px">'+d.label+'</span><div class="bar thin"><i style="width:'+pc+'%"></i></div><span class="xs muted">'+fmt(Math.min(q.prog,d.goal))+' / '+fmt(d.goal)+' · '+coin(11)+' '+d.pts+' · '+d.xp+' pass XP</span></div>'+
+   (q.claimed?'<span class="xs muted">Claimed</span>':done?'<button class="btn2 acc" style="flex:none;width:76px;height:40px" data-a="qclaim" data-kind="'+kind+'" data-id="'+q.id+'">Claim</button>':'')+'</div></div>';}
+  h+='<div class="row between"><h2 style="font-size:18px">Daily</h2><span class="xs muted" data-end="'+nextMidnight()+'" data-pre="Resets in ">Resets in '+timeLeft(nextMidnight()-Date.now())+'</span></div>'+S.quests.day.list.map(function(q){return qcard("day",q);}).join("");
+  h+='<div class="row between"><h2 style="font-size:18px">Weekly</h2><span class="xs muted" data-end="'+nextMonday()+'" data-pre="Resets in ">Resets in '+timeLeft(nextMonday()-Date.now())+'</span></div>'+S.quests.week.list.map(function(q){return qcard("week",q);}).join("");
+ }else{
+  var t=passTier(),xpIn=(S.pass.xp||0)-t*PASS_XP,rows="";
+  for(var i=1;i<=30;i++){var r=passReward(i),got=S.pass.claimed.indexOf(i)>=0,can=i<=t&&!got;
+   rows+='<div class="ptier'+(i<=t?' reached':'')+(r.big?' big':'')+'"><span class="pnum">'+i+'</span><span class="li">'+rewardIcon(r)+'</span><span style="flex:1;font-weight:900;font-size:14px">'+r.label+'</span>'+(got?'<span class="xs" style="color:var(--accent)">'+ic("check")+'</span>':can?'<button class="btn2 acc" style="flex:none;width:72px;height:36px" data-a="pclaim" data-t="'+i+'">Claim</button>':'<span class="xs muted">'+ic("lock")+'</span>')+'</div>';}
+  h+='<div class="card passhero"><div class="row between"><span class="xs" style="letter-spacing:.6px;color:#ffe9a8">SEMESTER PASS · FALL 2026 · FREE</span><span class="xs muted">Ends in '+timeLeft(PASS_END-Date.now())+'</span></div><div class="row" style="gap:12px;margin:8px 0"><span style="font-family:Fredoka;font-weight:700;font-size:40px">'+t+'</span><span class="col"><b>Tier '+t+' of 30</b><span class="xs muted">'+(t<30?fmt(xpIn)+' / '+fmt(PASS_XP)+' XP to tier '+(t+1):'Pass complete!')+'</span></span></div><div class="bar"><i style="width:'+(t<30?xpIn/PASS_XP*100:100)+'%;background:linear-gradient(90deg,#ffd23f,#ff8a3a)"></i></div>'+
+  '<div class="xs muted" style="margin-top:8px">Earn pass XP: 2 per study minute · 100 per daily quest · 300 per weekly quest</div>'+(passClaimable()>1?'<button class="btn2 acc" style="width:100%;flex:none;margin-top:10px" data-a="pclaimall">Claim all ('+passClaimable()+')</button>':'')+'</div>'+rows;
+ }
+ return h+'</div>';
+}
+
+function youScreen(){
+ var tab=ui.youTab||"skills";
+ var h=header()+'<div class="stack"><div class="card row" style="gap:14px"><span class="av" style="width:56px;height:56px;background:var(--accent);color:var(--onAccent);font-size:24px;border-radius:18px">P</span><div class="col" style="flex:1"><span style="font-family:Fredoka;font-weight:700;font-size:20px">Preston</span><span class="xs muted">Level '+level()+' · '+(+(S.totalMin/60).toFixed(1))+' hrs studied · best streak '+(S.stats.bestStreak||S.streak)+'</span></div><span class="chip" style="font-size:12px;color:#ffd23f">'+ic("star")+S.stars+'</span></div>'+
+ seg("youTab",tab,[["skills","Skills",S.stars>0],["badges","Badges",badgesClaimable()>0],["shop","Shop"],["themes","Themes"]]);
+ if(tab==="skills"){
+  h+='<div class="row between"><span class="sm muted">1 skill star per level · '+S.stars+' to spend</span><button class="btn2 ghost" style="flex:none;height:34px;padding:0 12px;font-size:13px" data-a="respec">Reset tree</button></div>';
+  SKILLS.forEach(function(br){h+='<section class="card" style="border-color:'+br.color+'55"><div class="row" style="gap:10px;margin-bottom:10px"><span class="ic" style="width:40px;height:40px;background:'+br.color+'33;color:'+br.color+'">'+ic(br.icon)+'</span><h2 style="font-size:18px">'+br.branch+'</h2></div><div class="col" style="gap:8px">';
+   br.nodes.forEach(function(n,i){var r=sk(n.id),un=skUnlocked(n.id),maxed=r>=n.max;
+    h+='<div class="sknode'+(un?'':' locked')+'"><div class="col" style="flex:1;min-width:0;gap:3px"><span style="font-weight:900">'+n.name+'</span><span class="xs muted">'+(r?'Now: '+n.eff(r):'Not learned')+(maxed?'':' → <b style="color:'+br.color+'">'+n.eff(r+1)+'</b>')+'</span><span class="pips">'+Array.apply(null,Array(n.max)).map(function(_,k){return '<i style="'+(k<r?'background:'+br.color:'')+'"></i>';}).join("")+'</span></div>'+
+    (maxed?'<span class="xs" style="color:'+br.color+'">MAX</span>':un?'<button class="btn2" style="flex:none;width:64px;height:40px;'+(S.stars>0?'background:'+br.color+';color:#14141f':'')+'" data-a="learn" data-id="'+n.id+'">'+ic("star")+'1</button>':'<span class="xs muted">'+ic("lock")+' '+br.nodes[i-1].name+'</span>')+'</div>';});
+   h+='</div></section>';});
+ }else if(tab==="badges"){
+  var got=BADGES.filter(badgeDone).length;
+  h+='<div class="row between"><span class="sm muted">'+got+' / '+BADGES.length+' unlocked · each badge gives 1 skill star + 250 points</span></div><div class="grid3">';
+  BADGES.forEach(function(b){var done=badgeDone(b),cl=!!S.badges[b.id],cur=Math.min(b.goal,b.cur());
+   h+='<div class="badge'+(done?'':' off')+'"><span class="bdg" style="background:'+(done?b.col:'#2a2a40')+'">'+ic(b.icon,"")+'</span><b>'+b.name+'</b><span class="xs muted">'+b.desc+'</span>'+(done?(cl?'<span class="xs" style="color:var(--accent)">Claimed</span>':'<button class="btn2 acc" style="flex:none;height:32px;width:100%;font-size:13px" data-a="bclaim" data-id="'+b.id+'">Claim</button>'):'<div class="bar thin" style="width:100%"><i style="width:'+(cur/b.goal*100)+'%"></i></div><span class="xs muted">'+(+cur.toFixed(1))+' / '+b.goal+'</span>')+'</div>';});
+  h+='</div>';
+ }else if(tab==="shop")h+=shopBody();
+ else h+=themesBody();
+ return h+'</div>';
+}
+
+function expeditionsBody(){
+ var n=slotsCount(),h='<div class="card" style="padding:12px 14px"><span class="sm">Send pets you aren\'t using on trips. They come back with food for themselves, points for you, and sometimes an egg.</span><div class="xs muted" style="margin-top:6px">'+n+' of 3 slots unlocked · more with the Explorer skill</div></div>';
+ for(var i=0;i<3;i++){var x=S.exp.slots[i];
+  if(i>=n){h+='<div class="card expslot locked"><span class="ic">'+ic("lock")+'</span><div class="col"><b>Slot '+(i+1)+' locked</b><span class="xs muted">Learn Explorer rank '+i+' in the skill tree</span></div></div>';continue;}
+  if(!x){h+='<button class="card expslot empty" data-a="expnew" data-slot="'+i+'"><span class="ic">'+ic("flag")+'</span><div class="col" style="text-align:left"><b>Send a pet</b><span class="xs muted">2, 4 or 8 hour trips</span></div><span style="margin-left:auto;font-size:24px">+</span></button>';continue;}
+  var sp=spById(x.s,x.tk),p=myPets(x.tk).filter(function(q){return q.s===x.s})[0]||{stage:1},end=x.start+x.h*3600e3,done=Date.now()>=end,pc=Math.min(100,(Date.now()-x.start)/(x.h*3600e3)*100);
+  h+='<div class="card expslot"><span class="'+(done?'':'bob')+'" style="display:block">'+petSVG(sp,p.stage,{w:70,shiny:p.shiny})+'</span><div class="col" style="flex:1;min-width:0;gap:4px"><b>'+sp.name+'</b><span class="xs muted">'+EXPL[x.tk][EXP_H.indexOf(x.h)]+' · '+x.h+' hr trip</span><div class="bar thin"><i style="width:'+pc+'%" data-endbar="'+end+'" data-start="'+x.start+'"></i></div><span class="xs muted" data-end="'+end+'" data-pre="Back in " data-done="Back! Tap to collect">'+(done?'Back! Tap to collect':'Back in '+timeLeft(end-Date.now()))+'</span></div>'+
+  (done?'<button class="btn2 acc" style="flex:none;width:80px;height:40px" data-a="expcollect" data-slot="'+i+'">Collect</button>':'')+'</div>';}
+ return h;
+}
+function expSheet(){
+ var st=ui.expPick,h;
+ if(!st.pet){var list=eligiblePets();
+  h='<h2 style="font-size:22px">Who\'s going?</h2><p class="xs muted" style="margin:4px 0 12px">Your active pet stays home. Pets from every theme can go.</p>'+(list.length?'<div class="grid3" style="max-height:52vh;overflow-y:auto">'+list.map(function(e,k){return '<button class="slot" data-a="exppet" data-k="'+k+'">'+petSVG(e.sp,e.p.stage,{shiny:e.p.shiny})+'<span class="nm">'+e.sp.name+'</span>'+stars(e.p.stage)+'<span class="rar r-'+e.sp.rarity+'" style="font-size:9px;padding:2px 7px">'+e.sp.rarity+'</span></button>';}).join("")+'</div>':'<p class="muted">No other pets available yet. Hatch more eggs!</p>');
+  ui.expList=list;
+ }else{var e=st.pet;
+  h='<div class="row" style="gap:12px">'+petSVG(e.sp,e.p.stage,{w:70,shiny:e.p.shiny})+'<div class="col"><h2 style="font-size:20px">'+e.sp.name+'</h2><span class="xs muted">'+e.sp.rarity+' · '+STAGE_NAME[e.p.stage]+' · rarer and older pets bring back more</span></div></div><div class="col" style="gap:8px;margin-top:12px">'+
+  EXP_H.map(function(hh,k){var es=expEst(e.sp,e.p.stage,hh);return '<button class="card expdur" data-a="expgo" data-h="'+hh+'"><div class="col" style="flex:1;text-align:left"><b>'+EXPL[e.tk][k]+' · '+hh+' hours</b><span class="xs muted">~'+es.pts+' points · '+es.food+' food · '+es.en+' energy · '+Math.round(es.egg*100)+'% egg chance</span></div><span style="font-size:20px">›</span></button>';}).join("")+'</div><button class="btn2 ghost" style="width:100%;flex:none;margin-top:10px" data-a="expback">Pick a different pet</button>';}
+ overlay('<div class="backdrop" data-a="bgclose"><div class="sheet">'+'<div class="row between" style="margin-bottom:8px"><span></span><button class="btn2 ghost" style="flex:none;width:40px;height:40px" data-a="close" aria-label="Close">✕</button></div>'+h+'</div></div>');
+}
+function collectExp(i){
+ var x=S.exp.slots[i];if(!x)return;var sp=spById(x.s,x.tk),p=myPets(x.tk).filter(function(q){return q.s===x.s})[0],es=expEst(sp,p?p.stage:1,x.h);
+ var gotEgg=Math.random()<es.egg,ev=false;S.points+=es.pts;S.energy+=es.en;if(p)ev=addFood(p,es.food);if(gotEgg)S.eggQueue.push({min:null});
+ S.exp.slots[i]=null;track("expdone",1);if(ev)track("evolve",1);save();
+ var items=[{ic:coin(34),label:'+'+fmt(es.pts)+' '+T().currency,sub:'Found on the trip'},{ic:petSVG(sp,p?p.stage:1,{w:44,shiny:p&&p.shiny}),label:'+'+es.food+' food',sub:sp.name+' ate well'+(ev?' and evolved!':'')},{ic:energyIcon(30),label:'+'+es.en+' boss energy',sub:'Ready for the raid'}];
+ if(gotEgg)items.push({ic:eggSVG(34),label:'Mystery egg!',sub:'Hatch it from Home or Pets',cls:'goldglow'});
+ overlay('<div class="backdrop center"><div class="modal"><span class="rar r-Rare">Expedition complete</span><div style="margin:10px auto" class="reveal">'+petSVG(sp,p?p.stage:1,{w:120,shiny:p&&p.shiny})+'</div><h2 style="font-size:22px">'+sp.name+' is back from '+EXPL[x.tk][EXP_H.indexOf(x.h)]+'!</h2><div class="col" style="gap:8px;margin-top:12px">'+items.map(function(it,k){return '<div class="loot '+(it.cls||'')+'" style="animation-delay:'+(.2+k*.3)+'s"><span class="li">'+it.ic+'</span><span class="col"><b style="font-family:Fredoka;font-size:16px">'+it.label+'</b><span class="xs muted">'+it.sub+'</span></span></div>';}).join("")+'</div><button class="btn3d" style="height:56px;margin-top:14px" data-a="close">Nice</button></div></div>');
+ confetti(gotEgg?100:50);render();
+}
+setInterval(function(){
+ var need=false;
+ [].forEach.call(document.querySelectorAll("[data-end]"),function(el){var end=+el.dataset.end,left=end-Date.now();if(left<=0){if(el.dataset.done){el.textContent=el.dataset.done;need=true;}}else el.textContent=(el.dataset.pre||"")+timeLeft(left);});
+ [].forEach.call(document.querySelectorAll("[data-endbar]"),function(el){var end=+el.dataset.endbar,st=+el.dataset.start;el.style.width=Math.min(100,(Date.now()-st)/(end-st)*100)+"%";});
+ if(need&&!$("overlay").innerHTML&&ui.tab==="pets"&&ui.petTab==="exp")render();
+},1000);
 
 /* ---------- secret: morse on coins (chapter screen) ---------- */
 var morse="",mt0=0,mtimer;
@@ -972,9 +1272,9 @@ function isP(){
 }
 
 /* ---------- secret admin panel ---------- */
-var ADM_FIELDS=[["points","Points (all themes)"],["xp","XP (1,000 per level)"],["streak","Streak days"],["energy","Boss energy"],["stars","Skill stars"],["eggMin","Egg minutes (60 = ready)"],["totalHrs","Total study hours"],["weekHrs","This week hours"],["bossHp","Boss HP left"],["todayN","Sessions today (tide)"],["inv.shield","Streak shields"],["inv.xp","XP potions"],["inv.warp","Point boosts"],["inv.lucky","Lucky eggs"]];
-function admGet(k){if(k==="totalHrs")return +(S.totalMin/60).toFixed(1);if(k==="weekHrs")return +(S.weekMin/60).toFixed(1);if(k==="todayN")return S.today.n;if(k==="bossHp")return S.boss.hp;if(k.indexOf("inv.")===0)return S.inv[k.slice(4)]||0;return S[k];}
-function admSet(k,v){v=Math.max(0,+v||0);if(k==="totalHrs")S.totalMin=Math.round(v*60);else if(k==="weekHrs")S.weekMin=Math.round(v*60);else if(k==="todayN")S.today.n=Math.round(v);else if(k==="bossHp")S.boss.hp=Math.max(1,Math.min(S.boss.max,Math.round(v)));else if(k.indexOf("inv.")===0)S.inv[k.slice(4)]=Math.round(v);else S[k]=v;}
+var ADM_FIELDS=[["points","Points (all themes)"],["passxp","Semester Pass XP"],["xp","XP (1,000 per level)"],["streak","Streak days"],["energy","Boss energy"],["stars","Skill stars"],["eggMin","Egg minutes (60 = ready)"],["totalHrs","Total study hours"],["weekHrs","This week hours"],["bossHp","Boss HP left"],["todayN","Sessions today (tide)"],["inv.shield","Streak shields"],["inv.xp","XP potions"],["inv.warp","Point boosts"],["inv.lucky","Lucky eggs"]];
+function admGet(k){if(k==="passxp")return S.pass.xp;if(k==="totalHrs")return +(S.totalMin/60).toFixed(1);if(k==="weekHrs")return +(S.weekMin/60).toFixed(1);if(k==="todayN")return S.today.n;if(k==="bossHp")return S.boss.hp;if(k.indexOf("inv.")===0)return S.inv[k.slice(4)]||0;return S[k];}
+function admSet(k,v){v=Math.max(0,+v||0);if(k==="passxp"){S.pass.xp=Math.round(v);return;}if(k==="totalHrs")S.totalMin=Math.round(v*60);else if(k==="weekHrs")S.weekMin=Math.round(v*60);else if(k==="todayN")S.today.n=Math.round(v);else if(k==="bossHp")S.boss.hp=Math.max(1,Math.min(S.boss.max,Math.round(v)));else if(k.indexOf("inv.")===0)S.inv[k.slice(4)]=Math.round(v);else S[k]=v;}
 function openAdmin(){
  var prev=document.querySelector(".admin"),st=prev?prev.scrollTop:0;
  var a=ui.adm,th=THEMES[a.theme],owned={};myPets(a.theme).forEach(function(p){owned[p.s]=p;});
@@ -984,7 +1284,7 @@ function openAdmin(){
  '<div class="stack">'+
  '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Stats</h2><div class="grid2" style="gap:10px">'+fields+'</div><button class="btn2 acc" style="width:100%;flex:none;margin-top:12px" data-a="asave">Save stats</button></section>'+
  '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Quick actions</h2><div class="grid2" style="gap:8px">'+
- [["pts","+10,000 points"],["lvl","+10 levels"],["energy","+50 energy"],["egg","Egg ready now"],["themes","Unlock all themes"],["maxall","Max every pet I own"],["allpets","Give every pet"],["boss5","Boss to 5% HP"],["heal","Skip 12 hrs (boss heals)"],["gold","Give a gold chest"],["silver","Give a silver chest"],["streak","Streak = 100"]].map(function(q){return '<button class="btn2" style="font-size:13px;height:44px" data-a="aq" data-q="'+q[0]+'">'+q[1]+'</button>';}).join("")+'</div></section>'+
+ [["pts","+10,000 points"],["lvl","+10 levels"],["energy","+50 energy"],["egg","Egg ready now"],["themes","Unlock all themes"],["maxall","Max every pet I own"],["allpets","Give every pet"],["boss5","Boss to 5% HP"],["heal","Skip 12 hrs (boss heals)"],["gold","Give a gold chest"],["silver","Give a silver chest"],["streak","Streak = 100"],["stars","+5 skill stars"],["passxp","+3,000 pass XP"],["quests","Finish all quests"],["exp","Finish expeditions now"],["newq","New quests"],["combo","Combo ready (×1.3)"]].map(function(q){return '<button class="btn2" style="font-size:13px;height:44px" data-a="aq" data-q="'+q[0]+'">'+q[1]+'</button>';}).join("")+'</div></section>'+
  '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Give any pet</h2><div class="tabs" style="margin-bottom:10px">'+THEME_ORDER.map(function(k){return '<button class="'+(a.theme===k?'on':'')+'" data-a="atheme" data-t="'+k+'">'+THEMES[k].name+'</button>';}).join("")+'</div>'+
  '<div class="seg" style="margin-bottom:8px">'+[1,2,3].map(function(n){return '<button class="'+(a.stage===n?'on':'')+'" style="height:44px;font-size:14px" data-a="astage" data-n="'+n+'">'+STAGE_NAME[n]+'</button>';}).join("")+'</div>'+
  '<button class="toggle" style="margin-bottom:10px" data-a="ashiny" aria-pressed="'+a.shiny+'"><span style="flex:1"><b style="display:block;font-size:14px">Give as shiny</b></span><span class="sw"></span></button>'+
@@ -1000,11 +1300,24 @@ app.addEventListener("click",function(e){
  if(a==="bgclose"){if(e.target===el)closeOverlay();return;}
  if(el.getAttribute("aria-disabled")==="true")return;
  switch(a){
-  case "tab":ui.tab=el.dataset.tab;if(ui.tab==="pets")ui.petTheme=S.theme;closeOverlay();render(true);$("screen").scrollTop=0;break;
+  case "tab":ui.tab=el.dataset.tab;if(ui.tab==="pets"){ui.petTheme=S.theme;}closeOverlay();render(true);$("screen").scrollTop=0;break;
   case "feed":feed();break;
   case "poke":var s=el.querySelector("svg");s.classList.remove("squish");void s.getBoundingClientRect();s.classList.add("squish");break;
-  case "setpet":if(el.dataset.t&&el.dataset.t!==S.theme){toast("Equip "+THEMES[el.dataset.t].name+" in Themes to use this pet");break;}S.active[S.theme]=el.dataset.id;save();if(el.dataset.close)closeOverlay();render();toast(spById(el.dataset.id).name+" is your study buddy now");break;
+  case "setpet":if(isBusy(el.dataset.t||S.theme,el.dataset.id)){toast("That pet is on an expedition");break;}if(el.dataset.t&&el.dataset.t!==S.theme){toast("Equip "+THEMES[el.dataset.t].name+" in Themes to use this pet");break;}S.active[S.theme]=el.dataset.id;save();if(el.dataset.close)closeOverlay();render();toast(spById(el.dataset.id).name+" is your study buddy now");break;
   case "pettheme":ui.petTheme=el.dataset.t;render();break;
+  case "seg":ui[el.dataset.k]=el.dataset.v;render();break;
+  case "goto":ui.tab=el.dataset.tab;if(el.dataset.k)ui[el.dataset.k]=el.dataset.v;closeOverlay();render(true);$("screen").scrollTop=0;break;
+  case "qclaim":var qk=el.dataset.kind,qq=S.quests[qk].list.filter(function(x){return x.id===el.dataset.id})[0],qd=qdef(qk,el.dataset.id);if(!qq||qq.claimed)break;qq.claimed=true;S.points+=qd.pts;S.pass.xp+=qd.xp;save();render();bump();toast("+"+qd.pts+" "+T().currency+" · +"+qd.xp+" pass XP");break;
+  case "pclaim":var tt3=+el.dataset.t;if(tt3<=passTier()&&S.pass.claimed.indexOf(tt3)<0){var rw=passReward(tt3);giveReward(rw);S.pass.claimed.push(tt3);save();render();toast("Tier "+tt3+": "+rw.label);if(rw.big)confetti(120);}break;
+  case "pclaimall":for(var ti=1;ti<=passTier();ti++)if(S.pass.claimed.indexOf(ti)<0){giveReward(passReward(ti));S.pass.claimed.push(ti);}save();render();confetti(80);toast("All pass rewards claimed");break;
+  case "learn":var nid=el.dataset.id,nd=skNode(nid);if(S.stars<1){toast("No skill stars. Level up or earn badges to get more!");break;}if(sk(nid)>=nd.n.max||!skUnlocked(nid))break;S.stars--;S.skills[nid]=sk(nid)+1;save();render();toast(nd.n.name+": "+nd.n.eff(sk(nid)));break;
+  case "respec":var refund=0;for(var k2 in S.skills)refund+=S.skills[k2];S.skills={};S.stars+=refund;save();render();toast("Refunded "+refund+" skill stars");break;
+  case "bclaim":var bd=BADGES.filter(function(x){return x.id===el.dataset.id})[0];if(!bd||S.badges[bd.id]||!badgeDone(bd))break;S.badges[bd.id]=1;S.stars++;S.points+=250;save();render();confetti(60);toast(bd.name+": +1 skill star, +250 points");break;
+  case "expnew":ui.expPick={slot:+el.dataset.slot,pet:null};expSheet();break;
+  case "exppet":ui.expPick.pet=ui.expList[+el.dataset.k];expSheet();break;
+  case "expback":ui.expPick.pet=null;expSheet();break;
+  case "expgo":var ep=ui.expPick.pet;S.exp.slots[ui.expPick.slot]={tk:ep.tk,s:ep.p.s,h:+el.dataset.h,start:Date.now()};track("expstart",1);save();closeOverlay();render();toast(ep.sp.name+" set off for "+EXPL[ep.tk][EXP_H.indexOf(+el.dataset.h)]+"!");break;
+  case "expcollect":collectExp(+el.dataset.slot);break;
   case "hatch":hatchModal();break;
   case "crack":crack();break;
   case "close":closeOverlay();render();break;
@@ -1022,8 +1335,8 @@ app.addEventListener("click",function(e){
   case "openchest":openChest();break;
   case "tapchest":tapChest();break;
   case "buy":var it=SHOP.filter(function(i){return i.id===el.dataset.id})[0];
-   if(S.points<it.price){toast("Need "+fmt(it.price-S.points)+" more "+T().currency);break;}
-   S.points-=it.price;S.inv[it.id]=(S.inv[it.id]||0)+1;save();render();bump();toast("Bought "+T().boosts[it.id]);break;
+   var pr=price(it);if(S.points<pr){toast("Need "+fmt(pr-S.points)+" more "+T().currency);break;}
+   S.points-=pr;if(it.id==="night"){S.nightUntil=Math.max(Date.now(),S.nightUntil||0)+7*864e5;}else S.inv[it.id]=(S.inv[it.id]||0)+1;save();render();bump();toast("Bought "+boostName(it.id));break;
   case "equip":if(S.theme===el.dataset.id)break;S.theme=el.dataset.id;ensureStarter(S.theme);save();render();toast("Welcome to "+T().name);confetti(50);break;
   case "unlock":var th=THEMES[el.dataset.id];
    if(S.totalMin/60>=th.unlockHrs){S.unlocked.push(el.dataset.id);ensureStarter(el.dataset.id);save();render();toast(th.name+" unlocked!");confetti(90);}
@@ -1033,6 +1346,11 @@ app.addEventListener("click",function(e){
   case "asave":[].forEach.call(document.querySelectorAll(".admin input[data-k]"),function(inp){admSet(inp.dataset.k,inp.value);});save();render();toast("Stats saved");break;
   case "aq":var q=el.dataset.q;
    if(q==="pts")S.points+=10000;if(q==="lvl")S.xp+=10000;if(q==="energy")S.energy+=50;if(q==="egg")S.eggMin=EGG_MIN;if(q==="streak")S.streak=100;
+   if(q==="stars")S.stars+=5;if(q==="passxp")S.pass.xp+=3000;
+   if(q==="quests"){refreshQuests();["day","week"].forEach(function(k){S.quests[k].list.forEach(function(x){var d=qdef(k,x.id);x.prog=d.goal;});});}
+   if(q==="exp")S.exp.slots.forEach(function(x){if(x)x.start=Date.now()-x.h*3600e3-1000;});
+   if(q==="newq"){S.quests={};refreshQuests();}
+   if(q==="combo")S.combo={n:3,lastEnd:Date.now()};
    if(q==="boss5")S.boss.hp=Math.max(1,Math.round(S.boss.max*.05));
    if(q==="heal"){S.lastChapterStudy-=12*3600e3;var hh=healCheck();toast(hh?bossName()+" healed "+fmt(hh)+" HP":"Already at the top of its phase");save();render();openAdmin();break;}
    if(q==="gold"||q==="silver")S.chests.push({tier:q,n:S.boss.n,theme:S.theme});
