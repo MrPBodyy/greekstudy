@@ -311,6 +311,15 @@ nav{background:color-mix(in srgb,var(--card) 80%,transparent);-webkit-backdrop-f
 .top .col span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .fxfront{z-index:4;opacity:.8}
 .fxfront .firefly{opacity:.9}
+.locrow{display:flex;align-items:center;gap:12px;border-radius:16px;padding:10px 12px;border:2px solid var(--edge);background:var(--bg)}
+.locrow.ok{border-color:#14998a}.locrow.away{border-color:#6b1f38}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--track);border-top-color:var(--accent);animation:spin .8s linear infinite;flex-shrink:0;margin:0 9px}
+.linkbtn{background:none;border:0;color:var(--accent);font-weight:900;font-size:13px;padding:6px 2px;text-decoration:underline}
+.btn3d.locked{background:#3a3a52;color:#c8c8dc;border-bottom-color:#22223a}
+.shakeit{animation:shake .4s}
+.chip.locbad{background:#5c1a2e;border-color:#ff3b5c;color:#ffc6d2}
+.spotedit{background:var(--bg);border-radius:14px;padding:10px;margin-bottom:8px}
+.txt{height:42px;border-radius:12px;border:2px solid var(--edge);background:var(--card);color:#fff;font:inherit;font-weight:800;padding:0 12px;font-size:16px}
 /* installed-app safe areas (iPhone notch / home bar) */
 main{padding-top:calc(18px + env(safe-area-inset-top))}
 nav{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
@@ -467,7 +476,8 @@ function migrate(){
  if(!S.lastChapterStudy)S.lastChapterStudy=Date.now();if(!S.lastSim)S.lastSim=Date.now();
  if(!S.boss){var mx=bossMax(1);S.boss={n:1,max:mx,hp:Math.round(mx*.34),contrib:{you:380,"Jake M.":300,"Cole B.":260,"Will S.":200,"Drew K.":160,"Tyler R.":126}};}
  if(!THEMES[S.theme])S.theme="ocean";
- S.tut=S.tut||{intro:0,tour:0,seen:{}};S.tut.seen=S.tut.seen||{};
+ S.tut=S.tut||{intro:0,tour:0,seen:{}};
+ if(!S.spots)S.spots=defaultSpots();if(S.pretend===undefined)S.pretend=null;S.tut.seen=S.tut.seen||{};
  S.skills=S.skills||{};S.badges=S.badges||{};S.pass=S.pass||{xp:2400,claimed:[]};S.exp=S.exp||{slots:[null,null,null]};S.combo=S.combo||{n:0,lastEnd:0};
  if(!S.stats||S.stats.session==null)S.stats={session:38,min:S.totalMin,crit:0,dmg:0,hatch:3,evolve:2,feed:0,energy:0,expstart:0,expdone:0,focus:0,night:0,maxCombo:0,chests:0,bestStreak:Math.max(S.streak,9)};
  if(!S.starsInit){S.stars+=level()-1;S.starsInit=1;}
@@ -476,7 +486,7 @@ migrate();
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 
 var ui={tab:"home",petTheme:null,pre:{len:50,focus:true,xp:false,warp:false},adm:{theme:"ocean",stage:3,shiny:false}};
-var sess=null,timer=null,arena=null;
+var sess=null,timer=null,arena=null,locTimer=null;
 
 function T(){return THEMES[S.theme];}
 function spById(id,tk){var arr=THEMES[tk||S.theme].species;for(var i=0;i<arr.length;i++)if(arr[i].id===id)return arr[i];return arr[0];}
@@ -957,12 +967,13 @@ function sessMults(o){
  return{m:m,lines:L};
 }
 function preSheet(){
+ if(!ui.loc||!ui.locAt||Date.now()-ui.locAt>30000){ui.loc={status:"checking"};ui.locAt=Date.now();locate(function(l){ui.loc=l;ui.locAt=Date.now();if(document.querySelector('.sheet [data-a="start"]'))preSheet();});}
  var p=ui.pre,t=T(),pet=activePet(),sp=spById(pet.s),pk=curPerk(),buddy=buddyNow()||(p.bell&&S.inv.bell>0?MEMBERS[2]:null),combo=comboNow(),night=nightOn()&&isNight();
  function tog(key,title,sub){return '<button class="toggle" data-a="ptog" data-k="'+key+'" aria-pressed="'+(!!p[key])+'"><span style="flex:1"><b style="display:block;font-size:15px">'+title+'</b><span class="xs muted">'+sub+'</span></span><span class="sw"></span></button>';}
  var sm=sessMults({focus:p.focus,tide:tideMult(),warp:p.warp&&S.inv.warp>0,perk:pk,perkName:sp.name+" perk",buff:buffOn(),combo:combo,night:night,buddy:buddy});
  var est=p.len*10*sm.m;
  overlay('<div class="backdrop" data-a="bgclose"><div class="sheet" style="max-height:92%;overflow-y:auto"><div class="row between"><h2 style="font-size:24px">Ready to study?</h2><button class="btn2 ghost" style="flex:none;width:44px;height:44px" data-a="close" aria-label="Close">✕</button></div>'+
- '<div class="row" style="gap:8px;margin:12px 0 12px;flex-wrap:wrap"><span class="chip" style="background:var(--bg)">'+ic("pin")+'Mitchell Library</span><span class="chip" style="background:#0e3b33;border-color:#14998a;color:#7bf5df">'+ic("check")+'Location verified</span>'+
+ '<div style="margin:12px 0 4px">'+locBlock(ui.loc)+'</div><div class="row" style="gap:8px;margin:4px 0 12px;flex-wrap:wrap">'+
  (buddyNow()?'<span class="chip" style="background:var(--bg)">'+ic("users")+buddyNow()+' is studying now</span>':'')+'</div>'+
  '<span class="sm muted">Session length</span><div class="seg" style="margin:8px 0 14px">'+[25,50,90].map(function(m){return '<button class="'+(p.len===m?'on':'')+'" data-a="plen" data-m="'+m+'">'+m+' min</button>';}).join("")+'</div>'+
  '<div class="col" style="gap:8px">'+tog("focus","Focus mode · ×"+focusMult().toFixed(1),"Leaving the app during the session cancels the bonus")+
@@ -972,7 +983,7 @@ function preSheet(){
  (!combo?'<div class="row between muted"><span>Combo Clock</span><span>start within 15 min of your last session</span></div>':'')+
  (nightOn()&&!night?'<div class="row between muted"><span>Night Owl</span><span>works 9 pm to 4 am</span></div>':'')+
  '<div class="row between"><span>Boss energy</span><span>+'+(Math.floor((S.energyMin+p.len)/10)+sk("battery"))+' '+energyIcon(13)+'</span></div><div class="row between tot"><span>Expected if you finish</span><span style="color:var(--coin)">'+fmt(est)+' '+t.currency+'</span></div></div>'+
- '<button class="btn3d" data-a="start">'+ic("play")+'Start '+p.len+' min</button></div></div>');
+ '<button class="btn3d'+(ui.loc&&ui.loc.status==="ok"?'':' locked')+'" data-a="start">'+ic(ui.loc&&ui.loc.status==="ok"?"play":"lock")+(ui.loc&&ui.loc.status==="ok"?'Start '+p.len+' min':'Go to a study spot to start')+'</button></div></div>');
 }
 
 var LINES=["You got this!","Taking notes too...","Halfway is closer than you think","Stay with me!","Deep focus mode","Charging boss energy...","Water break soon?"];
@@ -982,10 +993,10 @@ function startSession(){
  if(!buddy&&p.bell&&S.inv.bell>0){S.inv.bell--;buddy=MEMBERS[Math.floor(Math.random()*MEMBERS.length)];}
  if(useXp)S.inv.xp--;if(useWarp)S.inv.warp--;save();
  var pet=activePet(),sp=spById(pet.s);
- sess={len:p.len*60,el:0,run:true,speed:1,focus:p.focus,broken:false,xp:useXp,warp:useWarp,tide:tideMult(),buff:buffOn(),last:Date.now(),line:0,perk:perkOf(sp,pet.stage,pet.shiny),sp:sp,stage:pet.stage,shiny:pet.shiny,combo:comboNow(),night:nightOn()&&isNight(),buddy:buddy,startTs:Date.now()};
+ sess={len:p.len*60,el:0,run:true,speed:1,focus:p.focus,broken:false,xp:useXp,warp:useWarp,tide:tideMult(),buff:buffOn(),last:Date.now(),line:0,perk:perkOf(sp,pet.stage,pet.shiny),sp:sp,stage:pet.stage,shiny:pet.shiny,spot:ui.loc&&ui.loc.spot?ui.loc.spot.name:"Study spot",locPaused:false,combo:comboNow(),night:nightOn()&&isNight(),buddy:buddy,startTs:Date.now()};
  sess.perkName=sp.name+' ('+STAGE_NAME[pet.stage]+')';
  var t=T();
- overlay('<div class="session"><div class="row between" style="width:100%"><span class="chip">'+ic("pin")+'Mitchell Library</span><button class="chip" id="spd" data-a="speed" style="cursor:pointer">Test speed 1×</button></div>'+
+ overlay('<div class="session"><div class="row between" style="width:100%;gap:8px"><span class="chip" id="locChip" style="min-width:0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">'+ic("pin")+(sess.spot||"Study spot")+' · verified</span><button class="chip" id="spd" data-a="speed" style="cursor:pointer">Test speed 1×</button></div>'+
  '<span id="fstat" class="chip" style="'+(sess.focus?'background:#0e3b33;border-color:#14998a;color:#7bf5df':'')+'">'+ic(sess.focus?"lock":"bolt")+(sess.focus?'Focus mode ×'+focusMult().toFixed(1)+' active':'Focus mode off')+'</span>'+
  ((sess.combo||sess.night||sess.buddy)?'<div class="row" style="gap:6px;flex-wrap:wrap;justify-content:center">'+(sess.combo?'<span class="chip" style="font-size:12px">'+ic("waves")+'Combo ×'+(1+.1*sess.combo).toFixed(1)+'</span>':'')+(sess.night?'<span class="chip" style="font-size:12px">'+ic("moon")+'Night Owl</span>':'')+(sess.buddy?'<span class="chip" style="font-size:12px">'+ic("users")+sess.buddy+' is studying too</span>':'')+'</div>':'')+
  '<div class="ring"><svg viewBox="0 0 250 250" aria-hidden="true"><circle cx="125" cy="125" r="108" fill="none" stroke="var(--track)" stroke-width="18"/><circle id="prog" cx="125" cy="125" r="108" fill="none" stroke="var(--accent)" stroke-width="18" stroke-linecap="round" stroke-dasharray="678.6" stroke-dashoffset="678.6" transform="rotate(-90 125 125)" style="transition:stroke-dashoffset .3s linear"/></svg><div class="t"><b id="tm">'+p.len+':00</b><span class="sm muted">of '+p.len+' min</span></div></div>'+
@@ -993,13 +1004,14 @@ function startSession(){
  '<div class="grid3" style="width:100%"><div class="stat"><b id="earn" style="color:var(--coin)">+0</b><span class="xs muted">'+t.currency+'</span></div><div class="stat"><b id="mult" style="color:var(--accent)">×1</b><span class="xs muted">Multiplier</span></div><div class="stat"><b id="en" style="color:#ffd23f">+0</b><span class="xs muted">Boss energy</span></div></div>'+
  '<div class="row gap" style="width:100%;margin-top:auto"><button class="btn2" style="height:60px;font-size:18px" id="pz" data-a="pause">Pause</button><button class="btn3d" style="flex:1;height:60px;font-size:18px" data-a="end">End and collect</button></div></div>');
  clearInterval(timer);timer=setInterval(tick,200);tick();
+ clearInterval(locTimer);locTimer=setInterval(locCheckSession,LOC_EVERY);
  if(!seenTip("session"))setTimeout(function(){showTip("session");},400);
 }
 function pm(s,type){return pmP(s.perk,type);}
 function curMult(){return sessMults(sess).m;}
 function tick(){
  if(!sess)return;var now=Date.now(),dt=(now-sess.last)/1000;sess.last=now;
- if(sess.run)sess.el=Math.min(sess.len,sess.el+dt*sess.speed);
+ if(sess.run&&!sess.locPaused)sess.el=Math.min(sess.len,sess.el+dt*sess.speed);
  var rem=sess.len-sess.el,mm=Math.floor(rem/60),ss=Math.floor(rem%60),mins=Math.floor(sess.el/60);
  var tm=$("tm");if(!tm)return;
  tm.textContent=mm+":"+String(ss).padStart(2,"0");
@@ -1011,10 +1023,11 @@ function tick(){
  if(sess.el>=sess.len)finish(true);
 }
 document.addEventListener("visibilitychange",function(){
+ if(!document.hidden&&sess)setTimeout(locCheckSession,500);
  if(document.hidden&&sess&&sess.run&&sess.focus&&!sess.broken){sess.broken=true;var f=$("fstat");if(f){f.removeAttribute("style");f.innerHTML=ic("bolt")+"Focus bonus lost: you left the app";}setTimeout(function(){toast("Focus bonus lost. Stay in the app next time!")},300);}
 });
 function finish(done){
- clearInterval(timer);var s=sess;sess=null;
+ clearInterval(timer);clearInterval(locTimer);var s=sess;sess=null;
  var mins=Math.floor(s.el/60),t=T();
  if(mins<1){overlay('<div class="backdrop center"><div class="modal"><h2 style="font-size:22px">Session too short</h2><p class="muted" style="font-weight:700">Study for at least 1 minute to earn '+t.currency+'.</p><button class="btn3d" style="height:56px" data-a="close">OK</button></div></div>');render();return;}
  var sm=sessMults(s),pts=Math.round(mins*10*sm.m);
@@ -1386,6 +1399,70 @@ setInterval(function(){
  if(need&&!$("overlay").innerHTML&&ui.tab==="pets"&&ui.petTab==="exp")render();
 },1000);
 
+/* ================= STUDY SPOT VERIFICATION (GPS geofence) ================= */
+function defaultSpots(){return [
+ {id:"library",name:"Mitchell Memorial Library",lat:33.4526,lng:-88.7876,r:100},
+ {id:"omac",name:"Old Main Academic Center",lat:null,lng:null,r:100},
+ {id:"union",name:"Colvard Student Union",lat:null,lng:null,r:100},
+ {id:"chapel",name:"Chapel of Memories",lat:null,lng:null,r:100},
+ {id:"phidelt",name:"Phi Delta Theta House",lat:null,lng:null,r:100},
+ {id:"lee",name:"Lee Hall",lat:null,lng:null,r:100},
+ {id:"swalm",name:"Swalm Hall",lat:null,lng:null,r:100},
+ {id:"montgomery",name:"Montgomery Hall",lat:33.453611,lng:-88.791389,r:100},
+ {id:"mccool",name:"McCool Hall",lat:null,lng:null,r:100}
+];}
+var LOC_EVERY=3*60e3;
+function spotSet(s){return typeof s.lat==="number"&&typeof s.lng==="number"&&!isNaN(s.lat)&&!isNaN(s.lng);}
+function meters(a,b,c,d){var R=6371000,t=Math.PI/180,dl=(c-a)*t,dn=(d-b)*t,x=Math.sin(dl/2)*Math.sin(dl/2)+Math.cos(a*t)*Math.cos(c*t)*Math.sin(dn/2)*Math.sin(dn/2);return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x));}
+function fmtDist(m){return m<1000?Math.round(m)+" m":(m/1609.34).toFixed(1)+" mi";}
+function spotById(id){return S.spots.filter(function(s){return s.id===id;})[0];}
+function evalPos(lat,lng,acc){
+ var best=null,near=null,slack=Math.min(acc||0,40);
+ S.spots.forEach(function(s){if(!spotSet(s))return;var d=meters(lat,lng,s.lat,s.lng);var x={spot:s,dist:d};if(!near||d<near.dist)near=x;if(d-slack<=s.r&&(!best||d<best.dist))best=x;});
+ return best?{status:"ok",spot:best.spot,dist:best.dist,acc:acc,lat:lat,lng:lng}:{status:"away",near:near,acc:acc,lat:lat,lng:lng};
+}
+function locate(cb,fresh){
+ if(S.pretend){var p=spotById(S.pretend);if(p){cb({status:"ok",spot:p,dist:0,acc:0,pretend:true});return;}}
+ if(!navigator.geolocation){cb({status:"error",err:"unsupported"});return;}
+ var done=false;
+ try{navigator.geolocation.getCurrentPosition(function(pos){if(done)return;done=true;cb(evalPos(pos.coords.latitude,pos.coords.longitude,pos.coords.accuracy));},function(e){if(done)return;done=true;cb({status:"error",err:e&&e.code===1?"denied":e&&e.code===3?"timeout":"unavailable"});},{enableHighAccuracy:true,timeout:12000,maximumAge:fresh?0:20000});}
+ catch(e){cb({status:"error",err:"unavailable"});}
+ setTimeout(function(){if(!done){done=true;cb({status:"error",err:"timeout"});}},14000);
+}
+var LOC_ERR={denied:"Location is turned off for GreekStudy. On iPhone: Settings → Privacy & Security → Location Services → Safari Websites → While Using. Then tap Check again.",timeout:"Couldn't get a GPS fix. Step near a window or outside for a moment and tap Check again.",unavailable:"Location isn't available right now. Tap Check again.",unsupported:"This device doesn't support location."};
+function inPreview(){try{return window.self!==window.top;}catch(e){return true;}}
+function locBlock(loc){
+ if(!loc||loc.status==="checking")return '<div class="locrow checking"><span class="spin"></span><div class="col"><b>Checking your location…</b><span class="xs muted">Sessions only count at approved study spots</span></div></div>';
+ if(loc.status==="ok")return '<div class="locrow ok"><span class="ic" style="width:40px;height:40px;background:#0e3b33;color:#7bf5df">'+ic("check")+'</span><div class="col" style="flex:1;min-width:0"><b>'+loc.spot.name+'</b><span class="xs" style="color:#7bf5df">'+(loc.pretend?'Verified (test mode: pretending)':'Verified · within '+loc.spot.r+' m'+(loc.acc?' · GPS ±'+Math.round(loc.acc)+' m':''))+'</span></div></div>';
+ if(loc.status==="away")return '<div class="locrow away"><span class="ic" style="width:40px;height:40px;background:#5c1a2e;color:#ff9db6">'+ic("pin")+'</span><div class="col" style="flex:1;min-width:0"><b>Not at a study spot</b><span class="xs" style="color:#ffc6d2">'+(loc.near?'Nearest: '+loc.near.spot.name+' · '+fmtDist(loc.near.dist)+' away':'No study spots are set up yet')+'</span></div><button class="btn2 ghost" style="flex:none;height:36px;padding:0 10px;font-size:13px" data-a="locretry">Check again</button></div><button class="linkbtn" data-a="spotlist">See all study spots</button>';
+ return '<div class="locrow away"><span class="ic" style="width:40px;height:40px;background:#5c1a2e;color:#ff9db6">'+ic("pin")+'</span><div class="col" style="flex:1;min-width:0"><b>'+(inPreview()&&!S.pretend?'Location is blocked in this preview':'Can\'t check your location')+'</b><span class="xs" style="color:#ffc6d2">'+(inPreview()?'Open the iPhone app to verify for real, or use “Pretend I\'m at…” in the dev panel to test here.':LOC_ERR[loc.err]||LOC_ERR.unavailable)+'</span></div><button class="btn2 ghost" style="flex:none;height:36px;padding:0 10px;font-size:13px" data-a="locretry">Check again</button></div>';
+}
+function spotListSheet(){
+ var loc=ui.loc||{},rows=S.spots.map(function(s){var d=(loc.lat!=null&&spotSet(s))?meters(loc.lat,loc.lng,s.lat,s.lng):null;
+  return '<div class="lb"><span class="ic" style="width:36px;height:36px">'+ic("pin")+'</span><span class="col" style="flex:1;min-width:0"><b>'+s.name+'</b><span class="xs muted">'+(spotSet(s)?'Within '+s.r+' m'+(d!=null?' · '+fmtDist(d)+' away':''):'Not set up yet (your admin sets it on site)')+'</span></span></div>';}).join("");
+ tutLayer('<div class="backdrop" data-a="tipclose"><div class="sheet tipsheet"><div class="row between" style="margin-bottom:6px"><h2 style="font-size:22px">Approved study spots</h2><button class="btn2 ghost" style="flex:none;width:40px;height:40px" data-a="tipclose" aria-label="Close">✕</button></div><p class="xs muted" style="margin:0 0 8px">Sessions can only start, and only keep counting, at one of these.</p>'+rows+'</div></div>');
+}
+function locCheckSession(){
+ if(!sess)return;
+ locate(function(l){if(!sess)return;sess.lastLoc=Date.now();
+  if(l.status==="ok"){if(sess.locPaused){sess.locPaused=false;sess.last=Date.now();toast("Back at "+l.spot.name+". Timer resumed!");}sess.spot=l.spot.name;}
+  else if(l.status==="away"||(l.status==="error"&&l.err==="denied")){if(!sess.locPaused){sess.locPaused=true;toast(l.status==="away"?"You left the study spot. Timer paused.":"Location turned off. Timer paused.");}}
+  updLocChip(l);
+ },true);
+}
+function updLocChip(l){var c=$("locChip");if(!c||!sess)return;
+ if(sess.locPaused){c.className="chip locbad";c.innerHTML=ic("pin")+(l&&l.near?'Paused: '+fmtDist(l.near.dist)+' from '+l.near.spot.name:'Paused: head back to your study spot');}
+ else{c.className="chip";c.innerHTML=ic("pin")+(sess.spot||"Study spot")+' · verified';}}
+function spotsAdminHTML(){
+ return '<section class="card"><h2 style="font-size:17px;margin-bottom:4px">Study spots</h2><p class="xs muted" style="margin:0 0 10px">Stand at a spot and tap <b>Set to my location</b>, or paste coordinates from Google Maps (long-press a building there). Radius is in meters.</p>'+
+ (S.pretend?'<div class="tierline t-gold" style="margin-bottom:8px">Pretending to be at '+((spotById(S.pretend)||{}).name||"?")+' <button class="linkbtn" data-a="spotpretendoff">Stop pretending</button></div>':'')+
+ S.spots.map(function(s){return '<div class="spotedit"><div class="row between"><b>'+s.name+'</b><span class="xs '+(spotSet(s)?'t-gold':'t-none')+'">'+(spotSet(s)?'Ready':'Needs setup')+'</span></div>'+
+  '<div class="grid3" style="gap:6px;margin:6px 0"><label class="fld">Latitude<input type="number" step="any" data-spot="'+s.id+'" data-f="lat" value="'+(spotSet(s)?s.lat:'')+'"></label><label class="fld">Longitude<input type="number" step="any" data-spot="'+s.id+'" data-f="lng" value="'+(spotSet(s)?s.lng:'')+'"></label><label class="fld">Radius<input type="number" step="1" data-spot="'+s.id+'" data-f="r" value="'+s.r+'"></label></div>'+
+  '<div class="row" style="gap:6px"><button class="btn2" style="height:36px;font-size:12px" data-a="spothere" data-id="'+s.id+'">'+ic("pin")+'Set to my location</button><button class="btn2'+(S.pretend===s.id?' acc':'')+'" style="height:36px;font-size:12px" data-a="spotpretend" data-id="'+s.id+'">Pretend I\'m here</button><button class="btn2 ghost" style="flex:none;width:40px;height:36px" data-a="spotdel" data-id="'+s.id+'" aria-label="Delete '+s.name+'">✕</button></div></div>';}).join("")+
+ '<div class="row" style="gap:6px;margin-top:10px"><input id="newSpot" class="txt" placeholder="New spot name" style="flex:1"><button class="btn2 acc" style="flex:none;padding:0 12px;height:42px" data-a="spotadd">Add here</button></div>'+
+ '<div class="grid2" style="margin-top:8px"><button class="btn2 acc" style="height:42px" data-a="spotsave">Save coordinates</button><button class="btn2 ghost" style="height:42px" data-a="spotreset">Reset to default list</button></div></section>';
+}
+
 /* ================= TUTORIAL: intro, home tour, first-visit tips, guide ================= */
 var TIPS={
  home:{title:"Home",icon:"home",pts:[
@@ -1394,6 +1471,8 @@ var TIPS={
   "<b>Feed</b> your pet 100 points at a time to evolve it. The perk under its name gets stronger each stage.",
   "Your <b>egg</b> hatches after 60 study minutes. The boss card at the bottom takes you to the raid."]},
  session:{title:"Study sessions",icon:"play",pts:[
+  "Sessions only work at an <b>approved study spot</b> like Mitchell Memorial Library. The app checks your location before you start and every few minutes after.",
+  "If you leave the spot, the timer <b>pauses</b> and picks back up when you return.",
   "<b>Focus mode ×1.5</b>: stay in the app. Switching apps or locking your phone cancels the bonus for this session.",
   "<b>Rising Tide</b>: each session today adds +0.15, up to ×1.45.",
   "<b>Combo Clock</b>: start your next session within 15 minutes of finishing to stack +10% (up to +30%).",
@@ -1544,7 +1623,7 @@ function openAdmin(){
  '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Stats</h2><div class="grid2" style="gap:10px">'+fields+'</div><button class="btn2 acc" style="width:100%;flex:none;margin-top:12px" data-a="asave">Save stats</button></section>'+
  '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Quick actions</h2><div class="grid2" style="gap:8px">'+
  [["pts","+10,000 points"],["lvl","+10 levels"],["energy","+50 energy"],["egg","Egg ready now"],["themes","Unlock all themes"],["maxall","Max every pet I own"],["allpets","Give every pet"],["boss5","Boss to 5% HP"],["heal","Skip 12 hrs (boss heals)"],["gold","Give a gold chest"],["silver","Give a silver chest"],["streak","Streak = 100"],["stars","+5 skill stars"],["passxp","+3,000 pass XP"],["quests","Finish all quests"],["exp","Finish expeditions now"],["newq","New quests"],["combo","Combo ready (×1.3)"]].map(function(q){return '<button class="btn2" style="font-size:13px;height:44px" data-a="aq" data-q="'+q[0]+'">'+q[1]+'</button>';}).join("")+'</div></section>'+
- '<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Give any pet</h2><div class="tabs" style="margin-bottom:10px">'+THEME_ORDER.map(function(k){return '<button class="'+(a.theme===k?'on':'')+'" data-a="atheme" data-t="'+k+'">'+THEMES[k].name+'</button>';}).join("")+'</div>'+
+ spotsAdminHTML()+'<section class="card"><h2 style="font-size:17px;margin-bottom:10px">Give any pet</h2><div class="tabs" style="margin-bottom:10px">'+THEME_ORDER.map(function(k){return '<button class="'+(a.theme===k?'on':'')+'" data-a="atheme" data-t="'+k+'">'+THEMES[k].name+'</button>';}).join("")+'</div>'+
  '<div class="seg" style="margin-bottom:8px">'+[1,2,3].map(function(n){return '<button class="'+(a.stage===n?'on':'')+'" style="height:44px;font-size:14px" data-a="astage" data-n="'+n+'">'+STAGE_NAME[n]+'</button>';}).join("")+'</div>'+
  '<button class="toggle" style="margin-bottom:10px" data-a="ashiny" aria-pressed="'+a.shiny+'"><span style="flex:1"><b style="display:block;font-size:14px">Give as shiny</b></span><span class="sw"></span></button>'+
  '<div class="grid3">'+pets+'</div><button class="btn2" style="width:100%;flex:none;margin-top:10px" data-a="athemeall">Give all '+th.name+' pets at '+STAGE_NAME[a.stage]+'</button></section>'+
@@ -1594,7 +1673,16 @@ app.addEventListener("click",function(e){
   case "pre":preSheet();break;
   case "plen":ui.pre.len=+el.dataset.m;preSheet();break;
   case "ptog":ui.pre[el.dataset.k]=!ui.pre[el.dataset.k];preSheet();break;
-  case "start":startSession();break;
+  case "start":if(!ui.loc||ui.loc.status!=="ok"){el.classList.remove("shakeit");void el.offsetWidth;el.classList.add("shakeit");toast(ui.loc&&ui.loc.status==="checking"?"Still checking your location…":"You need to be at an approved study spot");break;}startSession();break;
+  case "locretry":ui.locAt=0;preSheet();break;
+  case "spotlist":spotListSheet();break;
+  case "spothere":var sid=el.dataset.id;toast("Getting your GPS position…");if(!navigator.geolocation){toast("Location isn't available here");break;}navigator.geolocation.getCurrentPosition(function(pos){var sp0=spotById(sid);if(!sp0)return;sp0.lat=+pos.coords.latitude.toFixed(6);sp0.lng=+pos.coords.longitude.toFixed(6);save();openAdmin();toast(sp0.name+" set (±"+Math.round(pos.coords.accuracy)+" m)");},function(e2){toast(e2&&e2.code===1?"Location permission is off":"Couldn't get a GPS fix. Try again");},{enableHighAccuracy:true,timeout:15000,maximumAge:0});break;
+  case "spotpretend":S.pretend=S.pretend===el.dataset.id?null:el.dataset.id;ui.locAt=0;save();openAdmin();toast(S.pretend?"Pretending to be at "+spotById(S.pretend).name:"Pretend mode off");break;
+  case "spotpretendoff":S.pretend=null;ui.locAt=0;save();openAdmin();toast("Pretend mode off");break;
+  case "spotdel":S.spots=S.spots.filter(function(x){return x.id!==el.dataset.id;});if(S.pretend===el.dataset.id)S.pretend=null;save();openAdmin();break;
+  case "spotsave":[].forEach.call(document.querySelectorAll(".admin input[data-spot]"),function(inp){var sp1=spotById(inp.dataset.spot);if(!sp1)return;var v=inp.value.trim();if(inp.dataset.f==="r")sp1.r=Math.max(10,Math.round(+v||100));else sp1[inp.dataset.f]=v===""?null:+v;});ui.locAt=0;save();openAdmin();toast("Study spots saved");break;
+  case "spotreset":S.spots=defaultSpots();S.pretend=null;ui.locAt=0;save();openAdmin();toast("Study spots reset");break;
+  case "spotadd":var nm=($("newSpot")||{}).value||"";nm=nm.trim();if(!nm){toast("Type a name first");break;}var nid="s"+Date.now();S.spots.push({id:nid,name:nm,lat:null,lng:null,r:100});save();openAdmin();toast("Added "+nm+". Getting your location…");if(navigator.geolocation)navigator.geolocation.getCurrentPosition(function(pos){var sp2=spotById(nid);if(!sp2)return;sp2.lat=+pos.coords.latitude.toFixed(6);sp2.lng=+pos.coords.longitude.toFixed(6);save();openAdmin();toast(nm+" set to your location");},function(){toast("Saved without coordinates. Set them later")},{enableHighAccuracy:true,timeout:15000,maximumAge:0});break;
   case "pause":sess.run=!sess.run;el.textContent=sess.run?"Pause":"Resume";break;
   case "speed":sess.speed=sess.speed===1?60:1;el.textContent="Test speed "+sess.speed+"×";if(sess.speed>1)toast("Test mode: 1 second = 1 minute");break;
   case "end":finish(false);break;
