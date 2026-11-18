@@ -226,6 +226,48 @@ nav button{position:relative}
 html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 button,a,.bossbox,.weak,.chestbtn{touch-action:manipulation}
 input,select,textarea{font-size:16px!important}
+/* ---------- tutorial ---------- */
+#tut{position:absolute;inset:0;z-index:75;pointer-events:none}
+#tut>*{pointer-events:auto}
+.intro{position:absolute;inset:0;background:radial-gradient(circle at 50% 32%,var(--glow),var(--bg) 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:calc(30px + env(safe-area-inset-top)) 24px calc(28px + env(safe-area-inset-bottom));text-align:center;animation:fade .35s}
+.introart{height:190px;display:flex;align-items:center;justify-content:center;animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
+.introart>svg,.introart>div{filter:drop-shadow(0 12px 24px rgba(0,0,0,.35))}
+.introtitle{font-size:30px;margin:18px 0 10px;animation:enter .45s .05s both}
+.introbody{font-size:16px;line-height:1.55;font-weight:700;color:var(--muted);max-width:330px;margin:0 0 22px;animation:enter .45s .12s both}
+.introbody b{color:#fff}
+.introskip{position:absolute;top:calc(16px + env(safe-area-inset-top));right:18px;background:none;border:0;color:var(--muted);font-weight:900;font-size:14px;padding:8px}
+.dots{display:flex;gap:7px;margin-bottom:22px}.dots i{width:8px;height:8px;border-radius:999px;background:var(--track);transition:width .25s}.dots i.on{width:24px;background:var(--accent)}
+.spot{position:absolute;border-radius:22px;box-shadow:0 0 0 2000px rgba(4,8,18,.72),0 0 0 3px var(--accent);transition:all .3s cubic-bezier(.3,1.2,.4,1);pointer-events:none;animation:spotpulse 1.6s ease-in-out infinite}
+@keyframes spotpulse{50%{box-shadow:0 0 0 2000px rgba(4,8,18,.72),0 0 0 7px var(--accent)}}
+.tourcard{position:absolute;left:16px;right:16px;background:var(--card);border:2px solid var(--accent);border-radius:22px;padding:14px 16px;animation:pop .35s cubic-bezier(.2,1.4,.4,1);box-shadow:0 16px 40px rgba(0,0,0,.45)}
+.tipsheet{max-height:86%;overflow-y:auto}
+.tiplist{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px}
+.tiplist li{position:relative;background:var(--bg);border-radius:14px;padding:10px 12px 10px 34px;font-size:14px;font-weight:700;line-height:1.45;color:var(--muted);animation:enter .35s both}
+.tiplist li b{color:#fff}
+.tiplist li::before{content:"";position:absolute;left:13px;top:16px;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.helpbtn{width:34px;height:34px;flex-shrink:0;border-radius:50%;border:2px solid var(--edge);background:var(--card);color:var(--muted);font-family:Fredoka,sans-serif;font-weight:700;font-size:17px;display:flex;align-items:center;justify-content:center;padding:0}
+details.guide{background:var(--card);border:2px solid var(--edge);border-radius:18px;padding:10px 12px}
+details.guide summary{display:flex;align-items:center;gap:12px;cursor:pointer;list-style:none;font-size:16px}
+details.guide summary::-webkit-details-marker{display:none}
+details.guide .chev{margin-left:auto;font-size:22px;color:var(--muted);transition:transform .2s}
+details.guide[open] .chev{transform:rotate(90deg)}
+details.guide .tiplist{margin-top:10px}
+/* ---------- polish ---------- */
+.enter .stack>*{animation:enter .42s cubic-bezier(.2,.9,.3,1) both}
+.enter .stack>*:nth-child(2){animation-delay:.04s}.enter .stack>*:nth-child(3){animation-delay:.08s}.enter .stack>*:nth-child(4){animation-delay:.12s}.enter .stack>*:nth-child(5){animation-delay:.16s}.enter .stack>*:nth-child(6){animation-delay:.2s}.enter .stack>*:nth-child(n+7){animation-delay:.24s}
+nav button.on::before{content:"";position:absolute;top:-10px;left:30%;right:30%;height:4px;border-radius:0 0 6px 6px;background:var(--accent)}
+nav button svg{transition:transform .2s}nav button.on svg{transform:translateY(-1px) scale(1.08)}
+.cta{position:relative;overflow:hidden}
+.cta::after{content:"";position:absolute;top:0;bottom:0;width:60px;left:-80px;background:linear-gradient(100deg,transparent,rgba(255,255,255,.45),transparent);transform:skewX(-20deg);animation:sheen 3.6s ease-in-out infinite}
+@keyframes sheen{0%,70%{left:-80px}100%{left:110%}}
+#toast{display:flex;align-items:center;gap:8px}
+#toast .ticon{width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--onAccent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+#toast .ticon svg{width:14px;height:14px}
+.lvlup{font-family:Fredoka,sans-serif;font-weight:700;font-size:30px;color:#ffd23f;text-shadow:0 3px 0 #a8780a,0 0 24px rgba(255,210,63,.6);margin:-4px 0 8px;animation:lvl .8s cubic-bezier(.2,1.6,.4,1)}
+@keyframes lvl{0%{transform:scale(.2) rotate(-12deg);opacity:0}60%{transform:scale(1.2) rotate(3deg);opacity:1}100%{transform:scale(1)}}
+.card{transition:transform .15s,border-color .2s}
+button.card:active{transform:scale(.98)}
+.seg2 button{transition:background .2s,color .2s}
 /* installed-app safe areas (iPhone notch / home bar) */
 main{padding-top:calc(18px + env(safe-area-inset-top))}
 nav{padding-bottom:calc(14px + env(safe-area-inset-bottom))}
@@ -243,6 +285,7 @@ html,body{overscroll-behavior:none}
   <nav id="nav" aria-label="Main"></nav>
   <div id="overlay"></div>
   <div id="toast" role="status" aria-live="polite"></div>
+  <div id="tut"></div>
 </div>
 <script>
 (function(){
@@ -380,6 +423,7 @@ function migrate(){
  if(!S.lastChapterStudy)S.lastChapterStudy=Date.now();if(!S.lastSim)S.lastSim=Date.now();
  if(!S.boss){var mx=bossMax(1);S.boss={n:1,max:mx,hp:Math.round(mx*.34),contrib:{you:380,"Jake M.":300,"Cole B.":260,"Will S.":200,"Drew K.":160,"Tyler R.":126}};}
  if(!THEMES[S.theme])S.theme="ocean";
+ S.tut=S.tut||{intro:0,tour:0,seen:{}};S.tut.seen=S.tut.seen||{};
  S.skills=S.skills||{};S.badges=S.badges||{};S.pass=S.pass||{xp:2400,claimed:[]};S.exp=S.exp||{slots:[null,null,null]};S.combo=S.combo||{n:0,lastEnd:0};
  if(!S.stats||S.stats.session==null)S.stats={session:38,min:S.totalMin,crit:0,dmg:0,hatch:3,evolve:2,feed:0,energy:0,expstart:0,expdone:0,focus:0,night:0,maxCombo:0,chests:0,bestStreak:Math.max(S.streak,9)};
  if(!S.starsInit){S.stars+=level()-1;S.starsInit=1;}
@@ -611,10 +655,13 @@ function applyTheme(){
  }
 }
 
+var shownPts=null;
+function greet(){var h=new Date().getHours();return h<5?"Late night grind,":h<12?"Good morning,":h<17?"Good afternoon,":"Good evening,";}
 function header(){
+ if(shownPts===null)shownPts=S.points;
  var xpIn=S.xp%1000;
- return '<header class="top"><div class="lvl" aria-label="Level '+level()+'">'+level()+'</div><div class="col" style="flex:1;min-width:0"><span style="font-family:Fredoka;font-weight:600;font-size:17px">Preston</span><div class="bar thin" style="margin-top:4px;max-width:120px"><i style="width:'+(xpIn/10)+'%"></i></div></div>'+
- '<span class="chip" id="ptsChip">'+coin()+'<span>'+fmt(S.points)+'</span></span><span class="chip">'+flame()+'<span>'+S.streak+'</span></span></header>';
+ return '<header class="top"><div class="lvl" aria-label="Level '+level()+'">'+level()+'</div><div class="col" style="flex:1;min-width:0"><span class="xs muted" style="line-height:1.1">'+greet()+'</span><span style="font-family:Fredoka;font-weight:600;font-size:17px;line-height:1.2">Preston</span><div class="bar thin" style="margin-top:4px;max-width:120px"><i style="width:'+(xpIn/10)+'%"></i></div></div>'+
+ '<span class="chip" id="ptsChip">'+coin()+'<span id="ptsNum">'+fmt(shownPts)+'</span></span><span class="chip">'+flame()+'<span>'+S.streak+'</span></span><button class="helpbtn" id="helpBtn" data-a="help" aria-label="How this screen works">?</button></header>';
 }
 
 function myShare(){var t=0;for(var k in S.boss.contrib)t+=S.boss.contrib[k];return t?(S.boss.contrib.you||0)/t:0;}
@@ -652,13 +699,13 @@ function homeScreen(){
  '<span class="perk" style="margin-bottom:12px">'+ic("spark")+'Perk: '+perkLabel(sp,pet.stage,pet.shiny)+'</span>'+
  '<div class="bar"><i style="width:'+pc+'%"></i></div><div class="row between sm muted" style="margin-top:6px"><span>'+(need?fmt(pet.food)+' / '+fmt(need)+' food':'Fully evolved')+'</span><span>'+(need?'Feed to evolve':'Max stage')+'</span></div>'+next+
  '<div class="row gap" style="margin-top:12px"><button class="btn2" data-a="feed"'+(need?'':' aria-disabled="true" style="opacity:.5"')+'>Feed · 100 '+coin(14)+'</button><button class="btn2" data-a="tab" data-tab="pets">Swap pet</button></div></section>'+
- '<div class="grid2"><div class="card" style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">'+eggSVG(44,eggReady?"egg":"",S.eggQueue.length&&S.eggQueue[0].min)+'<span style="font-family:Fredoka;font-weight:600">'+(S.eggQueue.length?S.eggQueue.length+' chest egg'+(S.eggQueue.length>1?'s':''):'Mystery egg')+'</span><div class="bar thin" style="width:100%"><i style="width:'+(S.eggQueue.length?100:Math.min(100,S.eggMin/EGG_MIN*100))+'%"></i></div>'+
+ '<div class="grid2"><div class="card" id="eggCard" style="padding:12px;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center">'+eggSVG(44,eggReady?"egg":"",S.eggQueue.length&&S.eggQueue[0].min)+'<span style="font-family:Fredoka;font-weight:600">'+(S.eggQueue.length?S.eggQueue.length+' chest egg'+(S.eggQueue.length>1?'s':''):'Mystery egg')+'</span><div class="bar thin" style="width:100%"><i style="width:'+(S.eggQueue.length?100:Math.min(100,S.eggMin/EGG_MIN*100))+'%"></i></div>'+
  (eggReady?'<button class="btn2 acc" style="width:100%;height:38px;flex:none" data-a="hatch">Hatch!</button>':'<span class="xs muted">'+Math.ceil(EGG_MIN-S.eggMin)+' study min to hatch</span>')+'</div>'+
  '<div class="card" style="padding:12px;display:flex;flex-direction:column;gap:4px"><span class="muted">'+ic("waves")+'</span><span style="font-family:Fredoka;font-weight:700;font-size:28px;color:var(--coin)">'+x2(tideMult())+'</span><span style="font-weight:900;font-size:14px">'+t.tide+'</span><span class="xs muted">'+S.today.n+' session'+(S.today.n===1?'':'s')+' today · +0.15 each, up to ×1.45</span></div></div>'+
  ((inv||live)?'<div class="row" style="gap:8px;flex-wrap:wrap">'+live+inv+'<button class="chip" style="font-size:12px;cursor:pointer" data-a="goto" data-tab="you" data-k="youTab" data-v="shop">'+ic("bag")+'Shop</button></div>':'')+
- '<button class="btn3d" data-a="pre">'+ic("play")+'Start study session</button>'+
+ '<button class="btn3d cta" id="startBtn" data-a="pre">'+ic("play")+'Start study session</button>'+
  '<button class="card row" style="gap:12px;width:100%;text-align:left;color:#fff" data-a="goto" data-tab="goals" data-k="goalTab" data-v="quests"><span class="ic" style="width:44px;height:44px">'+ic("flag")+'</span><span class="col" style="flex:1;gap:4px"><b>Daily quests '+dq+' / 3</b><div class="bar thin"><i style="width:'+(dq/3*100)+'%"></i></div><span class="xs muted">Semester Pass tier '+passTier()+' / 30'+(questsClaimable()+passClaimable()?' · rewards ready!':'')+'</span></span><span style="font-size:22px">›</span></button>'+
- bossCard(false)+'</div>';
+ '<div id="bossCardHome">'+bossCard(false)+'</div></div>';
 }
 
 function petsScreen(){
@@ -721,15 +768,19 @@ var SCREENS={home:homeScreen,pets:petsScreen,goals:goalsScreen,chapter:chapterSc
 var NAV=[["home","home","Home"],["pets","paw","Pets"],["goals","flag","Goals"],["chapter","trophy","Chapter"],["you","star","You"]];
 function navDot(k){if(k==="goals")return questsClaimable()+passClaimable()>0;if(k==="pets")return S.eggQueue.length>0||S.eggMin>=EGG_MIN||S.exp.slots.some(function(x){return x&&Date.now()>=x.start+x.h*3600e3;});if(k==="chapter")return S.chests.length>0;if(k==="you")return S.stars>0||badgesClaimable()>0;return false;}
 
+function countUp(){var el=$("ptsNum");if(!el)return;var from=shownPts,to=S.points;if(from===to){el.textContent=fmt(to);return;}var t0=null,d=650;shownPts=to;
+ function step(ts){if(!t0)t0=ts;var k=Math.min(1,(ts-t0)/d),e=1-Math.pow(1-k,3),cur=$("ptsNum");if(!cur)return;cur.textContent=fmt(from+(to-from)*e);if(k<1)requestAnimationFrame(step);}
+ try{requestAnimationFrame(step);}catch(e){el.textContent=fmt(to);}}
 function render(anim){
  applyTheme();refreshQuests();
  var m=$("screen");
  m.innerHTML='<div class="'+(anim?'enter':'')+'">'+SCREENS[ui.tab]()+'</div>';
+ countUp();maybeTip();
  $("nav").innerHTML=NAV.map(function(n){return '<button class="'+(ui.tab===n[0]?'on':'')+'" data-a="tab" data-tab="'+n[0]+'"'+(ui.tab===n[0]?' aria-current="page"':'')+'>'+ic(n[1],"")+n[2]+(navDot(n[0])?'<span class="ndot"></span>':'')+'</button>';}).join("");
 }
 
 var tt;
-function toast(msg){var el=$("toast");el.textContent=msg;el.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){el.classList.remove("show")},2400);}
+function toast(msg){var el=$("toast");el.innerHTML='<span class="ticon">'+ic("spark")+'</span>';el.appendChild(document.createTextNode(msg));el.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){el.classList.remove("show")},2400);}
 function bump(){var c=$("ptsChip");if(c){c.classList.remove("bump");void c.offsetWidth;c.classList.add("bump");}}
 function confetti(n){var cols=["#ffd166","#ff6a8a","#2fe0c8","#b3a6ff","#8ff05a","#ff9d4a",T().c.accent];
  for(var i=0;i<(n||70);i++){var e=document.createElement("i");e.className="cf";e.style.left=(Math.random()*100)+"%";e.style.background=cols[i%cols.length];e.style.animationDuration=(1.6+Math.random()*1.6)+"s";e.style.animationDelay=(Math.random()*.4)+"s";app.appendChild(e);(function(el){setTimeout(function(){el.remove()},3800)})(e);}}
@@ -840,6 +891,7 @@ function startSession(){
  '<div class="grid3" style="width:100%"><div class="stat"><b id="earn" style="color:var(--coin)">+0</b><span class="xs muted">'+t.currency+'</span></div><div class="stat"><b id="mult" style="color:var(--accent)">×1</b><span class="xs muted">Multiplier</span></div><div class="stat"><b id="en" style="color:#ffd23f">+0</b><span class="xs muted">Boss energy</span></div></div>'+
  '<div class="row gap" style="width:100%;margin-top:auto"><button class="btn2" style="height:60px;font-size:18px" id="pz" data-a="pause">Pause</button><button class="btn3d" style="flex:1;height:60px;font-size:18px" data-a="end">End and collect</button></div></div>');
  clearInterval(timer);timer=setInterval(tick,200);tick();
+ if(!seenTip("session"))setTimeout(function(){showTip("session");},400);
 }
 function pm(s,type){return pmP(s.perk,type);}
 function curMult(){return sessMults(sess).m;}
@@ -880,7 +932,7 @@ function finish(done){
  var lines='<div class="row between"><span>'+mins+' min × 10 base</span><span>'+fmt(mins*10)+'</span></div>'+sm.lines.map(function(l){return '<div class="row between"><span>'+l[0]+'</span><span>'+(l[2]==="off"?'off':x2(l[1])+(l[2]==="lost"?' (lost)':''))+'</span></div>';}).join("")+
  '<div class="row between tot"><span>'+t.currency+' earned</span><span style="color:var(--coin)">+'+fmt(pts)+'</span></div>';
  var perkNote=(s.perk.type!=="pts"&&s.perk.type!=="dual")?'<div class="row between" style="margin-top:6px"><span>'+pName+' perk</span><span>'+perkLabel(s.sp,s.stage,s.shiny)+'</span></div>':'';
- overlay('<div class="backdrop center"><div class="modal"><span class="rar r-Legendary">'+(done?'Session complete':'Session ended')+'</span><h2 style="font-size:26px;margin:12px 0 4px">+'+fmt(pts)+' '+t.currency+'</h2><p class="muted" style="font-weight:700;margin:0 0 12px">+'+fmt(xp)+' XP'+(s.xp?' (2× potion)':'')+(lvGain>0?' · Level up! Level '+level()+' (+'+lvGain+' skill star'+(lvGain>1?'s':'')+')':'')+'</p>'+
+ overlay('<div class="backdrop center"><div class="modal">'+(lvGain>0?'<div class="lvlup">LEVEL '+level()+'!</div>':'')+'<span class="rar r-Legendary">'+(done?'Session complete':'Session ended')+'</span><h2 style="font-size:26px;margin:12px 0 4px">+'+fmt(pts)+' '+t.currency+'</h2><p class="muted" style="font-weight:700;margin:0 0 12px">+'+fmt(xp)+' XP'+(s.xp?' (2× potion)':'')+(lvGain>0?' · Level up! Level '+level()+' (+'+lvGain+' skill star'+(lvGain>1?'s':'')+')':'')+'</p>'+
  '<div class="math">'+lines+perkNote+'<div class="row between" style="margin-top:6px"><span>Boss energy</span><span>+'+en+' '+energyIcon(13)+' ('+S.energy+' total)</span></div><div class="row between"><span>Egg progress</span><span>+'+eggGain+' → '+Math.floor(S.eggMin)+' / '+EGG_MIN+'</span></div><div class="row between"><span>Semester Pass</span><span>+'+passXp+' XP</span></div>'+(done?'<div class="row between"><span>Combo Clock</span><span>'+S.combo.n+' in a row · next within 15 min</span></div>':'')+streakMsg+'</div>'+
  '<div class="row gap" style="margin-top:14px"><button class="btn2" data-a="collect">Collect</button>'+(en>0?'<button class="btn2" style="background:#ff3b5c;color:#fff;border-bottom-color:#9a1a32" data-a="arena">'+ic("sword")+'Use energy</button>':'')+'</div></div></div>');
  confetti(lvGain>0?140:80);
@@ -917,6 +969,7 @@ function openArena(){
  arena={weakT:null,allyT:null};
  var moveWeak=function(){var w=$("weak");if(!w)return;var spots=[[30,30],[70,30],[50,55],[26,62],[74,62],[50,22],[40,45],[62,46]];var s=spots[Math.floor(Math.random()*spots.length)];w.style.left="calc("+s[0]+"% + "+((Math.random()*16-8)|0)+"px)";w.style.top=s[1]+"%";};
  moveWeak();arena.weakT=setInterval(moveWeak,1300);
+ if(!seenTip("arena"))setTimeout(function(){showTip("arena");},400);
  var ally=function(){if(!arena)return;var who=MEMBERS[Math.floor(Math.random()*MEMBERS.length)],crit=Math.random()<.2,amt=crit?20+Math.floor(Math.random()*15):8+Math.floor(Math.random()*12);
   var before=phase();dealDamage(who,amt);save();floatDmg(30+Math.random()*40,15+Math.random()*50,(crit?"CRIT ":"")+"-"+amt,"ally");feedLine('<b style="color:'+MCOL[who]+'">'+who+'</b> '+(crit?'crit for ':'dealt ')+amt);updArena(before);
   arena.allyT=setTimeout(ally,4000+Math.random()*5000);};
@@ -1175,7 +1228,7 @@ function goalsScreen(){
 function youScreen(){
  var tab=ui.youTab||"skills";
  var h=header()+'<div class="stack"><div class="card row" style="gap:14px"><span class="av" style="width:56px;height:56px;background:var(--accent);color:var(--onAccent);font-size:24px;border-radius:18px">P</span><div class="col" style="flex:1"><span style="font-family:Fredoka;font-weight:700;font-size:20px">Preston</span><span class="xs muted">Level '+level()+' · '+(+(S.totalMin/60).toFixed(1))+' hrs studied · best streak '+(S.stats.bestStreak||S.streak)+'</span></div><span class="chip" style="font-size:12px;color:#ffd23f">'+ic("star")+S.stars+'</span></div>'+
- seg("youTab",tab,[["skills","Skills",S.stars>0],["badges","Badges",badgesClaimable()>0],["shop","Shop"],["themes","Themes"]]);
+ seg("youTab",tab,[["skills","Skills",S.stars>0],["badges","Badges",badgesClaimable()>0],["shop","Shop"],["themes","Themes"],["guide","Guide"]]);
  if(tab==="skills"){
   h+='<div class="row between"><span class="sm muted">1 skill star per level · '+S.stars+' to spend</span><button class="btn2 ghost" style="flex:none;height:34px;padding:0 12px;font-size:13px" data-a="respec">Reset tree</button></div>';
   SKILLS.forEach(function(br){h+='<section class="card" style="border-color:'+br.color+'55"><div class="row" style="gap:10px;margin-bottom:10px"><span class="ic" style="width:40px;height:40px;background:'+br.color+'33;color:'+br.color+'">'+ic(br.icon)+'</span><h2 style="font-size:18px">'+br.branch+'</h2></div><div class="col" style="gap:8px">';
@@ -1190,6 +1243,7 @@ function youScreen(){
    h+='<div class="badge'+(done?'':' off')+'"><span class="bdg" style="background:'+(done?b.col:'#2a2a40')+'">'+ic(b.icon,"")+'</span><b>'+b.name+'</b><span class="xs muted">'+b.desc+'</span>'+(done?(cl?'<span class="xs" style="color:var(--accent)">Claimed</span>':'<button class="btn2 acc" style="flex:none;height:32px;width:100%;font-size:13px" data-a="bclaim" data-id="'+b.id+'">Claim</button>'):'<div class="bar thin" style="width:100%"><i style="width:'+(cur/b.goal*100)+'%"></i></div><span class="xs muted">'+(+cur.toFixed(1))+' / '+b.goal+'</span>')+'</div>';});
   h+='</div>';
  }else if(tab==="shop")h+=shopBody();
+ else if(tab==="guide")h+=guideBody();
  else h+=themesBody();
  return h+'</div>';
 }
@@ -1229,6 +1283,105 @@ setInterval(function(){
  [].forEach.call(document.querySelectorAll("[data-endbar]"),function(el){var end=+el.dataset.endbar,st=+el.dataset.start;el.style.width=Math.min(100,(Date.now()-st)/(end-st)*100)+"%";});
  if(need&&!$("overlay").innerHTML&&ui.tab==="pets"&&ui.petTab==="exp")render();
 },1000);
+
+/* ================= TUTORIAL: intro, home tour, first-visit tips, guide ================= */
+var TIPS={
+ home:{title:"Home",icon:"home",pts:[
+  "<b>Start study session</b> is how you earn everything. Pick 25, 50 or 90 minutes.",
+  "You earn <b>10 points per minute</b>. Multipliers stack on top (see the math before you start).",
+  "<b>Feed</b> your pet 100 points at a time to evolve it. The perk under its name gets stronger each stage.",
+  "Your <b>egg</b> hatches after 60 study minutes. The boss card at the bottom takes you to the raid."]},
+ session:{title:"Study sessions",icon:"play",pts:[
+  "<b>Focus mode ×1.5</b>: stay in the app. Switching apps or locking your phone cancels the bonus for this session.",
+  "<b>Rising Tide</b>: each session today adds +0.15, up to ×1.45.",
+  "<b>Combo Clock</b>: start your next session within 15 minutes of finishing to stack +10% (up to +30%).",
+  "<b>Night Owl</b> (shop) adds +25% from 9 pm to 4 am. <b>Study Buddy</b> adds +15% when a chapter member studies at the same time.",
+  "Every 10 minutes also gives <b>1 boss energy</b>. Ending early still pays for the minutes you did."]},
+ pets:{title:"Pets",icon:"paw",pts:[
+  "Each theme has <b>19 pets</b>: 7 Common, 6 Rare, 3 Epic, 2 Legendary and 1 Boss pet.",
+  "Pets grow <b>Hatchling → Juvenile → Ascended</b>. Each stage changes the look and raises the perk.",
+  "Perks: Common 5/10/15% · Rare 8/16/25% · Epic 12/24/36% · Legendary 20/40/60%. Only your <b>active</b> pet's perk counts.",
+  "Eggs hatch from your <b>equipped theme</b>. Shinies (2%) get new colors, a shimmer and +5% perk.",
+  "Boss pets only drop from <b>boss chests</b>."]},
+ exp:{title:"Expeditions",icon:"flag",pts:[
+  "Send any pet <b>except your active one</b> on a 2, 4 or 8 hour trip, from any theme.",
+  "They come back with <b>food for themselves</b>, points and energy for you, and a 4–22% egg chance.",
+  "Rarer and more evolved pets bring back more. Learn <b>Explorer</b> in the skill tree for up to 3 slots."]},
+ goals:{title:"Goals",icon:"flag",pts:[
+  "<b>3 daily and 3 weekly quests</b>, picked at random. Claim them for points and Pass XP.",
+  "Daily quests reset at midnight; weekly ones reset Monday."]},
+ pass:{title:"Semester Pass",icon:"star",pts:[
+  "<b>30 free tiers</b>, 1,000 XP each. Earn XP from study minutes (2 per minute) and quests.",
+  "Big rewards: <b>Epic+ egg</b> at tier 10, <b>Legendary egg</b> at 20, and a <b>Shiny Legendary egg</b> at 30.",
+  "Rewards you've reached wait for you. Claim them any time this semester."]},
+ chapter:{title:"Chapter boss",icon:"trophy",pts:[
+  "Your whole chapter fights <b>one boss</b>, shown in your own theme.",
+  "Tap <b>Fight</b> and spend energy: each tap is 10 damage, the glowing <b>weak spot</b> does 2×, and your pet adds its own hit.",
+  "Chests depend on your share: <b>Bronze</b> 60+ damage · <b>Silver</b> 5% · <b>Gold</b> 15% or top 3.",
+  "Beating a boss gives everyone <b>+10% points for 7 days</b>, and the next boss appears with 20% more HP.",
+  "If nobody studies for 12 hours, the boss <b>heals 5%</b>."]},
+ arena:{title:"Raid",icon:"sword",pts:[
+  "Tap the boss to attack. Each tap uses <b>1 energy</b>.",
+  "Hit the <b>glowing weak spot</b> for bonus damage. It moves every second or so.",
+  "Watch the HP bar markers: at 66% and 33% the boss gets angrier.",
+  "The line at the bottom shows which chest you're on track for and why."]},
+ you:{title:"You",icon:"star",pts:[
+  "<b>Skills</b>: you get 1 skill star per level (plus stars from chests, badges and the Pass). Reset the tree any time for free.",
+  "<b>Badges</b>: long-term goals. Each gives 1 skill star and 250 points.",
+  "<b>Shop</b>: boosts, paid only with points you earn by studying.",
+  "<b>Themes</b>: 10 worlds. They change colors, pets, boosts and the boss. Your progress carries over.",
+  "<b>Guide</b>: everything explained, plus replaying this tutorial."]}
+};
+var INTRO=[
+ {title:"Welcome to GreekStudy",art:function(){return petSVG(spById("axolotl","ocean"),3,{w:170});},body:"Study for real, get rewarded for real. Every minute you study powers your pets, your chapter and your progress."},
+ {title:"Study to earn",art:function(){return '<svg width="160" height="160" viewBox="0 0 160 160" aria-hidden="true"><circle cx="80" cy="80" r="64" fill="none" stroke="var(--track)" stroke-width="14"/><circle cx="80" cy="80" r="64" fill="none" stroke="var(--accent)" stroke-width="14" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="130" transform="rotate(-90 80 80)"/><text x="80" y="90" text-anchor="middle" font-family="Fredoka" font-weight="700" font-size="34" fill="#fff">32:04</text></svg>';},body:"Start a session at a verified study spot. You earn <b>10 points a minute</b>, ×1.5 with Focus mode. Boosts like Combo Clock and Study Buddy stack on top."},
+ {title:"Raise your pets",art:function(){var sp=spById("lion","zoo");return '<div class="row" style="gap:2px;justify-content:center;align-items:flex-end">'+petSVG(sp,1,{w:70})+petSVG(sp,2,{w:90})+petSVG(sp,3,{w:110})+'</div>';},body:"Feed your pet to evolve it: <b>Hatchling → Juvenile → Ascended</b>. Every stage looks cooler <b>and</b> boosts its perk. 190 pets to collect."},
+ {title:"Hatch eggs",art:function(){return '<div class="egg" style="display:inline-block">'+eggSVG(110)+'</div>';},body:"Every <b>60 study minutes</b> hatches an egg. Common 55% · Rare 28% · Epic 13% · Legendary 4%, and a 2% shiny chance on top."},
+ {title:"Fight chapter bosses",art:function(){return '<div style="width:170px;height:150px;margin:0 auto">'+bossSVG(S.theme,2)+'</div>';},body:"10 study minutes = <b>1 energy</b>. Spend it attacking the boss with your chapter. Beat it for <b>chests, boss-only pets</b> and a +10% buff."},
+ {title:"Quests and the Pass",art:function(){return '<div class="row" style="gap:14px;justify-content:center"><span class="ic" style="width:80px;height:80px;border-radius:24px">'+ic("flag","")+'</span><span class="ic" style="width:80px;height:80px;border-radius:24px;background:#4a2a0a;color:#ffd23f">'+ic("star","")+'</span></div>';},body:"Daily and weekly quests give points and <b>Pass XP</b>. The free 30-tier Semester Pass ends with a <b>Shiny Legendary egg</b>."},
+ {title:"Make it yours",art:function(){return '<div class="row" style="gap:10px;justify-content:center"><span class="bdg" style="background:#ffd23f;width:64px;height:64px">'+ic("trophy","")+'</span><span class="bdg" style="background:#2fe0c8;width:64px;height:64px">'+ic("star","")+'</span><span class="bdg" style="background:#ff6ad5;width:64px;height:64px">'+ic("palette","")+'</span></div>';},body:"Level up for <b>skill stars</b>, unlock <b>badges</b>, send pets on <b>expeditions</b> and switch between <b>10 themes</b>. Tap <b>?</b> on any screen for help."}
+];
+var TOUR=[
+ {sel:"#petBtn",title:"Your study buddy",body:"Tap to pet it. Feed it to evolve. Its perk boosts you while you study."},
+ {sel:"#startBtn",title:"Start here",body:"Every point, egg and boss hit comes from study sessions."},
+ {sel:"#eggCard",title:"Your egg",body:"Hatches after 60 study minutes. Chest eggs show up here too."},
+ {sel:"#bossCardHome",title:"Chapter boss",body:"Fight with the energy you earn. Bigger contributions earn better chests."},
+ {sel:"#nav",title:"Everything else",body:"Pets, Goals, Chapter and You. A red dot means something's ready to claim."},
+ {sel:"#helpBtn",title:"Need help?",body:"Tap ? on any screen to see how it works. The full guide lives in You → Guide."}
+];
+function tutLayer(html){var t=$("tut");t.innerHTML=html;t.style.pointerEvents=html?"auto":"none";}
+function seenTip(k){return S.tut&&S.tut.seen&&S.tut.seen[k];}
+function showIntro(i){
+ i=i||0;var sl=INTRO[i],last=i===INTRO.length-1;
+ tutLayer('<div class="intro"><button class="introskip" data-a="tskip">Skip</button><div class="introart" key="'+i+'">'+sl.art()+'</div><h1 class="introtitle">'+sl.title+'</h1><p class="introbody">'+sl.body+'</p>'+
+ '<div class="dots">'+INTRO.map(function(_,k){return '<i class="'+(k===i?'on':'')+'"></i>';}).join("")+'</div>'+
+ '<div class="row gap" style="width:100%">'+(i>0?'<button class="btn2 ghost" style="flex:none;width:90px;height:60px" data-a="tprev" data-i="'+i+'">Back</button>':'')+'<button class="btn3d" style="flex:1;height:60px" data-a="'+(last?'tdone':'tnext')+'" data-i="'+i+'">'+(last?'Let\'s go':'Next')+'</button></div></div>');
+}
+function finishIntro(){S.tut.intro=1;save();tutLayer("");ui.tab="home";closeOverlay();render(true);setTimeout(function(){startTour(0);},450);}
+function startTour(i){
+ if(i>=TOUR.length){S.tut.tour=1;S.tut.seen.home=1;save();tutLayer("");toast("You're all set. Go study!");return;}
+ var st=TOUR[i],el=document.querySelector(st.sel);if(!el){startTour(i+1);return;}
+ var m=$("screen");if(m.contains(el)){var er=el.getBoundingClientRect(),mr=m.getBoundingClientRect();if(er.top<mr.top+40||er.bottom>mr.bottom-110)m.scrollTop+=er.top-mr.top-140;}
+ setTimeout(function(){
+  var r=el.getBoundingClientRect(),a=app.getBoundingClientRect(),pad=8,x=r.left-a.left-pad,y=r.top-a.top-pad,w=r.width+pad*2,h=r.height+pad*2;
+  var below=y+h+190<a.height,ty=below?y+h+14:y-14;
+  tutLayer('<div class="spot" style="left:'+x+'px;top:'+y+'px;width:'+w+'px;height:'+h+'px"></div><div class="tourcard" style="'+(below?'top:'+ty+'px':'bottom:'+(a.height-ty)+'px')+'"><div class="row between"><span class="xs muted">'+(i+1)+' of '+TOUR.length+'</span><button class="introskip" style="position:static" data-a="tourend">Skip tour</button></div><h2 style="font-size:19px;margin:4px 0">'+st.title+'</h2><p class="muted" style="margin:0 0 12px;font-weight:700;font-size:14px">'+st.body+'</p><button class="btn2 acc" style="width:100%;flex:none" data-a="tournext" data-i="'+i+'">'+(i===TOUR.length-1?'Done':'Next')+'</button></div>');
+ },260);
+}
+function tipKey(){if(ui.tab==="pets")return ui.petTab==="exp"?"exp":"pets";if(ui.tab==="goals")return ui.goalTab==="pass"?"pass":"goals";return ui.tab;}
+function showTip(k,force){
+ var t=TIPS[k];if(!t)return;if(!force&&seenTip(k))return;
+ S.tut.seen[k]=1;save();
+ tutLayer('<div class="backdrop" data-a="tipclose"><div class="sheet tipsheet"><div class="row" style="gap:12px;margin-bottom:10px"><span class="ic" style="width:48px;height:48px;background:var(--accent);color:var(--onAccent)">'+ic(t.icon)+'</span><div class="col"><span class="xs muted" style="letter-spacing:.5px">HOW IT WORKS</span><h2 style="font-size:22px">'+t.title+'</h2></div></div><ul class="tiplist">'+t.pts.map(function(p,i){return '<li style="animation-delay:'+(i*60)+'ms">'+p+'</li>';}).join("")+'</ul><button class="btn3d" style="height:56px;margin-top:6px" data-a="tipclose">Got it</button></div></div>');
+}
+function maybeTip(){if(!S.tut.intro||!S.tut.tour)return;if($("tut").innerHTML)return;if($("overlay").innerHTML)return;var k=tipKey();if(TIPS[k]&&!seenTip(k))setTimeout(function(){if(!$("overlay").innerHTML&&!$("tut").innerHTML&&tipKey()===k)showTip(k);},350);}
+function guideBody(){
+ var order=["home","session","pets","exp","chapter","arena","goals","pass","you"];
+ return '<div class="card" style="padding:14px"><h2 style="font-size:18px;margin-bottom:6px">How to play</h2><p class="xs muted" style="margin:0">Tap a topic to open it. You can also tap <b>?</b> at the top of any screen.</p></div>'+
+ order.map(function(k){var t=TIPS[k];return '<details class="guide"><summary><span class="ic" style="width:38px;height:38px">'+ic(t.icon)+'</span><b>'+t.title+'</b><span class="chev">›</span></summary><ul class="tiplist">'+t.pts.map(function(p){return '<li>'+p+'</li>';}).join("")+'</ul></details>';}).join("")+
+ '<div class="grid2"><button class="btn2" style="height:50px" data-a="replayintro">Replay intro</button><button class="btn2" style="height:50px" data-a="replaytour">Replay Home tour</button></div>'+
+ '<button class="btn2 ghost" style="width:100%;flex:none;height:46px" data-a="resettips">Show first-visit tips again</button>';
+}
 
 /* ---------- secret: morse on coins (chapter screen) ---------- */
 var morse="",mt0=0,mtimer;
@@ -1310,6 +1463,16 @@ app.addEventListener("click",function(e){
   case "setpet":if(isBusy(el.dataset.t||S.theme,el.dataset.id)){toast("That pet is on an expedition");break;}if(el.dataset.t&&el.dataset.t!==S.theme){toast("Equip "+THEMES[el.dataset.t].name+" in Themes to use this pet");break;}S.active[S.theme]=el.dataset.id;save();if(el.dataset.close)closeOverlay();render();toast(spById(el.dataset.id).name+" is your study buddy now");break;
   case "pettheme":ui.petTheme=el.dataset.t;render();break;
   case "seg":ui[el.dataset.k]=el.dataset.v;render();break;
+  case "tnext":showIntro(+el.dataset.i+1);break;
+  case "tprev":showIntro(+el.dataset.i-1);break;
+  case "tdone":case "tskip":finishIntro();break;
+  case "tournext":startTour(+el.dataset.i+1);break;
+  case "tourend":S.tut.tour=1;S.tut.seen.home=1;save();tutLayer("");break;
+  case "tipclose":if(a==="tipclose"&&el.classList.contains("backdrop")&&e.target!==el)break;tutLayer("");break;
+  case "help":if($("overlay").innerHTML&&document.querySelector(".arena"))showTip("arena",true);else showTip(tipKey(),true);break;
+  case "replayintro":showIntro(0);break;
+  case "replaytour":S.tut.tour=0;save();ui.tab="home";render(true);$("screen").scrollTop=0;setTimeout(function(){startTour(0);},400);break;
+  case "resettips":S.tut.seen={home:1};save();toast("Tips will show again on each screen");break;
   case "goto":ui.tab=el.dataset.tab;if(el.dataset.k)ui[el.dataset.k]=el.dataset.v;closeOverlay();render(true);$("screen").scrollTop=0;break;
   case "qclaim":var qk=el.dataset.kind,qq=S.quests[qk].list.filter(function(x){return x.id===el.dataset.id})[0],qd=qdef(qk,el.dataset.id);if(!qq||qq.claimed)break;qq.claimed=true;S.points+=qd.pts;S.pass.xp+=qd.xp;save();render();bump();toast("+"+qd.pts+" "+T().currency+" · +"+qd.xp+" pass XP");break;
   case "pclaim":var tt3=+el.dataset.t;if(tt3<=passTier()&&S.pass.claimed.indexOf(tt3)<0){var rw=passReward(tt3);giveReward(rw);S.pass.claimed.push(tt3);save();render();toast("Tier "+tt3+": "+rw.label);if(rw.big)confetti(120);}break;
@@ -1372,6 +1535,7 @@ app.addEventListener("click",function(e){
 
 healCheck();offlineSim();
 render(true);
+if(!S.tut.intro)setTimeout(function(){showIntro(0);},300);
 if(S.boss.hp<=0)setTimeout(defeat,600);
 })();
 
